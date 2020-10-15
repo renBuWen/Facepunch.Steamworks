@@ -9,371 +9,286 @@ namespace Steamworks
 {
 	internal class ISteamRemoteStorage : SteamInterface
 	{
-		public override string InterfaceName => "STEAMREMOTESTORAGE_INTERFACE_VERSION014";
 		
-		public override void InitInternals()
+		internal ISteamRemoteStorage( bool IsGameServer )
 		{
-			_FileWrite = Marshal.GetDelegateForFunctionPointer<FFileWrite>( Marshal.ReadIntPtr( VTable, 0) );
-			_FileRead = Marshal.GetDelegateForFunctionPointer<FFileRead>( Marshal.ReadIntPtr( VTable, 8) );
-			_FileWriteAsync = Marshal.GetDelegateForFunctionPointer<FFileWriteAsync>( Marshal.ReadIntPtr( VTable, 16) );
-			_FileReadAsync = Marshal.GetDelegateForFunctionPointer<FFileReadAsync>( Marshal.ReadIntPtr( VTable, 24) );
-			_FileReadAsyncComplete = Marshal.GetDelegateForFunctionPointer<FFileReadAsyncComplete>( Marshal.ReadIntPtr( VTable, 32) );
-			_FileForget = Marshal.GetDelegateForFunctionPointer<FFileForget>( Marshal.ReadIntPtr( VTable, 40) );
-			_FileDelete = Marshal.GetDelegateForFunctionPointer<FFileDelete>( Marshal.ReadIntPtr( VTable, 48) );
-			_FileShare = Marshal.GetDelegateForFunctionPointer<FFileShare>( Marshal.ReadIntPtr( VTable, 56) );
-			_SetSyncPlatforms = Marshal.GetDelegateForFunctionPointer<FSetSyncPlatforms>( Marshal.ReadIntPtr( VTable, 64) );
-			_FileWriteStreamOpen = Marshal.GetDelegateForFunctionPointer<FFileWriteStreamOpen>( Marshal.ReadIntPtr( VTable, 72) );
-			_FileWriteStreamWriteChunk = Marshal.GetDelegateForFunctionPointer<FFileWriteStreamWriteChunk>( Marshal.ReadIntPtr( VTable, 80) );
-			_FileWriteStreamClose = Marshal.GetDelegateForFunctionPointer<FFileWriteStreamClose>( Marshal.ReadIntPtr( VTable, 88) );
-			_FileWriteStreamCancel = Marshal.GetDelegateForFunctionPointer<FFileWriteStreamCancel>( Marshal.ReadIntPtr( VTable, 96) );
-			_FileExists = Marshal.GetDelegateForFunctionPointer<FFileExists>( Marshal.ReadIntPtr( VTable, 104) );
-			_FilePersisted = Marshal.GetDelegateForFunctionPointer<FFilePersisted>( Marshal.ReadIntPtr( VTable, 112) );
-			_GetFileSize = Marshal.GetDelegateForFunctionPointer<FGetFileSize>( Marshal.ReadIntPtr( VTable, 120) );
-			_GetFileTimestamp = Marshal.GetDelegateForFunctionPointer<FGetFileTimestamp>( Marshal.ReadIntPtr( VTable, 128) );
-			_GetSyncPlatforms = Marshal.GetDelegateForFunctionPointer<FGetSyncPlatforms>( Marshal.ReadIntPtr( VTable, 136) );
-			_GetFileCount = Marshal.GetDelegateForFunctionPointer<FGetFileCount>( Marshal.ReadIntPtr( VTable, 144) );
-			_GetFileNameAndSize = Marshal.GetDelegateForFunctionPointer<FGetFileNameAndSize>( Marshal.ReadIntPtr( VTable, 152) );
-			_GetQuota = Marshal.GetDelegateForFunctionPointer<FGetQuota>( Marshal.ReadIntPtr( VTable, 160) );
-			_IsCloudEnabledForAccount = Marshal.GetDelegateForFunctionPointer<FIsCloudEnabledForAccount>( Marshal.ReadIntPtr( VTable, 168) );
-			_IsCloudEnabledForApp = Marshal.GetDelegateForFunctionPointer<FIsCloudEnabledForApp>( Marshal.ReadIntPtr( VTable, 176) );
-			_SetCloudEnabledForApp = Marshal.GetDelegateForFunctionPointer<FSetCloudEnabledForApp>( Marshal.ReadIntPtr( VTable, 184) );
-			_UGCDownload = Marshal.GetDelegateForFunctionPointer<FUGCDownload>( Marshal.ReadIntPtr( VTable, 192) );
-			_GetUGCDownloadProgress = Marshal.GetDelegateForFunctionPointer<FGetUGCDownloadProgress>( Marshal.ReadIntPtr( VTable, 200) );
-			_GetUGCDetails = Marshal.GetDelegateForFunctionPointer<FGetUGCDetails>( Marshal.ReadIntPtr( VTable, 208) );
-			_UGCRead = Marshal.GetDelegateForFunctionPointer<FUGCRead>( Marshal.ReadIntPtr( VTable, 216) );
-			_GetCachedUGCCount = Marshal.GetDelegateForFunctionPointer<FGetCachedUGCCount>( Marshal.ReadIntPtr( VTable, 224) );
-			 // PublishWorkshopFile is deprecated - 232
-			 // CreatePublishedFileUpdateRequest is deprecated - 240
-			 // UpdatePublishedFileFile is deprecated - 248
-			 // UpdatePublishedFilePreviewFile is deprecated - 256
-			 // UpdatePublishedFileTitle is deprecated - 264
-			 // UpdatePublishedFileDescription is deprecated - 272
-			 // UpdatePublishedFileVisibility is deprecated - 280
-			 // UpdatePublishedFileTags is deprecated - 288
-			 // CommitPublishedFileUpdate is deprecated - 296
-			 // GetPublishedFileDetails is deprecated - 304
-			 // DeletePublishedFile is deprecated - 312
-			 // EnumerateUserPublishedFiles is deprecated - 320
-			 // SubscribePublishedFile is deprecated - 328
-			 // EnumerateUserSubscribedFiles is deprecated - 336
-			 // UnsubscribePublishedFile is deprecated - 344
-			 // UpdatePublishedFileSetChangeDescription is deprecated - 352
-			 // GetPublishedItemVoteDetails is deprecated - 360
-			 // UpdateUserPublishedItemVote is deprecated - 368
-			 // GetUserPublishedItemVoteDetails is deprecated - 376
-			 // EnumerateUserSharedWorkshopFiles is deprecated - 384
-			 // PublishVideo is deprecated - 392
-			 // SetUserPublishedFileAction is deprecated - 400
-			 // EnumeratePublishedFilesByUserAction is deprecated - 408
-			 // EnumeratePublishedWorkshopFiles is deprecated - 416
-			_UGCDownloadToLocation = Marshal.GetDelegateForFunctionPointer<FUGCDownloadToLocation>( Marshal.ReadIntPtr( VTable, 424) );
+			SetupInterface( IsGameServer );
 		}
-		internal override void Shutdown()
-		{
-			base.Shutdown();
-			
-			_FileWrite = null;
-			_FileRead = null;
-			_FileWriteAsync = null;
-			_FileReadAsync = null;
-			_FileReadAsyncComplete = null;
-			_FileForget = null;
-			_FileDelete = null;
-			_FileShare = null;
-			_SetSyncPlatforms = null;
-			_FileWriteStreamOpen = null;
-			_FileWriteStreamWriteChunk = null;
-			_FileWriteStreamClose = null;
-			_FileWriteStreamCancel = null;
-			_FileExists = null;
-			_FilePersisted = null;
-			_GetFileSize = null;
-			_GetFileTimestamp = null;
-			_GetSyncPlatforms = null;
-			_GetFileCount = null;
-			_GetFileNameAndSize = null;
-			_GetQuota = null;
-			_IsCloudEnabledForAccount = null;
-			_IsCloudEnabledForApp = null;
-			_SetCloudEnabledForApp = null;
-			_UGCDownload = null;
-			_GetUGCDownloadProgress = null;
-			_GetUGCDetails = null;
-			_UGCRead = null;
-			_GetCachedUGCCount = null;
-			_UGCDownloadToLocation = null;
-		}
+		
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_SteamRemoteStorage_v014", CallingConvention = Platform.CC)]
+		internal static extern IntPtr SteamAPI_SteamRemoteStorage_v014();
+		public override IntPtr GetUserInterfacePointer() => SteamAPI_SteamRemoteStorage_v014();
+		
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWrite", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileWrite( IntPtr self, string pchFile, IntPtr pvData, int cubData );
-		private FFileWrite _FileWrite;
+		private static extern bool _FileWrite( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, int cubData );
 		
 		#endregion
-		internal bool FileWrite( string pchFile, IntPtr pvData, int cubData )
+		internal bool FileWrite( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, int cubData )
 		{
-			return _FileWrite( Self, pchFile, pvData, cubData );
+			var returnValue = _FileWrite( Self, pchFile, pvData, cubData );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate int FFileRead( IntPtr self, string pchFile, IntPtr pvData, int cubDataToRead );
-		private FFileRead _FileRead;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileRead", CallingConvention = Platform.CC)]
+		private static extern int _FileRead( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, int cubDataToRead );
 		
 		#endregion
-		internal int FileRead( string pchFile, IntPtr pvData, int cubDataToRead )
+		internal int FileRead( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, int cubDataToRead )
 		{
-			return _FileRead( Self, pchFile, pvData, cubDataToRead );
+			var returnValue = _FileRead( Self, pchFile, pvData, cubDataToRead );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FFileWriteAsync( IntPtr self, string pchFile, IntPtr pvData, uint cubData );
-		private FFileWriteAsync _FileWriteAsync;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWriteAsync", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _FileWriteAsync( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, uint cubData );
 		
 		#endregion
-		internal async Task<RemoteStorageFileWriteAsyncComplete_t?> FileWriteAsync( string pchFile, IntPtr pvData, uint cubData )
+		internal CallResult<RemoteStorageFileWriteAsyncComplete_t> FileWriteAsync( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, IntPtr pvData, uint cubData )
 		{
-			return await RemoteStorageFileWriteAsyncComplete_t.GetResultAsync( _FileWriteAsync( Self, pchFile, pvData, cubData ) );
+			var returnValue = _FileWriteAsync( Self, pchFile, pvData, cubData );
+			return new CallResult<RemoteStorageFileWriteAsyncComplete_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FFileReadAsync( IntPtr self, string pchFile, uint nOffset, uint cubToRead );
-		private FFileReadAsync _FileReadAsync;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileReadAsync", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _FileReadAsync( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, uint nOffset, uint cubToRead );
 		
 		#endregion
-		internal async Task<RemoteStorageFileReadAsyncComplete_t?> FileReadAsync( string pchFile, uint nOffset, uint cubToRead )
+		internal CallResult<RemoteStorageFileReadAsyncComplete_t> FileReadAsync( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, uint nOffset, uint cubToRead )
 		{
-			return await RemoteStorageFileReadAsyncComplete_t.GetResultAsync( _FileReadAsync( Self, pchFile, nOffset, cubToRead ) );
+			var returnValue = _FileReadAsync( Self, pchFile, nOffset, cubToRead );
+			return new CallResult<RemoteStorageFileReadAsyncComplete_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileReadAsyncComplete", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileReadAsyncComplete( IntPtr self, SteamAPICall_t hReadCall, IntPtr pvBuffer, uint cubToRead );
-		private FFileReadAsyncComplete _FileReadAsyncComplete;
+		private static extern bool _FileReadAsyncComplete( IntPtr self, SteamAPICall_t hReadCall, IntPtr pvBuffer, uint cubToRead );
 		
 		#endregion
 		internal bool FileReadAsyncComplete( SteamAPICall_t hReadCall, IntPtr pvBuffer, uint cubToRead )
 		{
-			return _FileReadAsyncComplete( Self, hReadCall, pvBuffer, cubToRead );
+			var returnValue = _FileReadAsyncComplete( Self, hReadCall, pvBuffer, cubToRead );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileForget", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileForget( IntPtr self, string pchFile );
-		private FFileForget _FileForget;
+		private static extern bool _FileForget( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal bool FileForget( string pchFile )
+		internal bool FileForget( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _FileForget( Self, pchFile );
+			var returnValue = _FileForget( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileDelete", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileDelete( IntPtr self, string pchFile );
-		private FFileDelete _FileDelete;
+		private static extern bool _FileDelete( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal bool FileDelete( string pchFile )
+		internal bool FileDelete( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _FileDelete( Self, pchFile );
+			var returnValue = _FileDelete( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FFileShare( IntPtr self, string pchFile );
-		private FFileShare _FileShare;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileShare", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _FileShare( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal async Task<RemoteStorageFileShareResult_t?> FileShare( string pchFile )
+		internal CallResult<RemoteStorageFileShareResult_t> FileShare( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return await RemoteStorageFileShareResult_t.GetResultAsync( _FileShare( Self, pchFile ) );
+			var returnValue = _FileShare( Self, pchFile );
+			return new CallResult<RemoteStorageFileShareResult_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_SetSyncPlatforms", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSetSyncPlatforms( IntPtr self, string pchFile, RemoteStoragePlatform eRemoteStoragePlatform );
-		private FSetSyncPlatforms _SetSyncPlatforms;
+		private static extern bool _SetSyncPlatforms( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, RemoteStoragePlatform eRemoteStoragePlatform );
 		
 		#endregion
-		internal bool SetSyncPlatforms( string pchFile, RemoteStoragePlatform eRemoteStoragePlatform )
+		internal bool SetSyncPlatforms( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile, RemoteStoragePlatform eRemoteStoragePlatform )
 		{
-			return _SetSyncPlatforms( Self, pchFile, eRemoteStoragePlatform );
+			var returnValue = _SetSyncPlatforms( Self, pchFile, eRemoteStoragePlatform );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate UGCFileWriteStreamHandle_t FFileWriteStreamOpen( IntPtr self, string pchFile );
-		private FFileWriteStreamOpen _FileWriteStreamOpen;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWriteStreamOpen", CallingConvention = Platform.CC)]
+		private static extern UGCFileWriteStreamHandle_t _FileWriteStreamOpen( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal UGCFileWriteStreamHandle_t FileWriteStreamOpen( string pchFile )
+		internal UGCFileWriteStreamHandle_t FileWriteStreamOpen( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _FileWriteStreamOpen( Self, pchFile );
+			var returnValue = _FileWriteStreamOpen( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWriteStreamWriteChunk", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileWriteStreamWriteChunk( IntPtr self, UGCFileWriteStreamHandle_t writeHandle, IntPtr pvData, int cubData );
-		private FFileWriteStreamWriteChunk _FileWriteStreamWriteChunk;
+		private static extern bool _FileWriteStreamWriteChunk( IntPtr self, UGCFileWriteStreamHandle_t writeHandle, IntPtr pvData, int cubData );
 		
 		#endregion
 		internal bool FileWriteStreamWriteChunk( UGCFileWriteStreamHandle_t writeHandle, IntPtr pvData, int cubData )
 		{
-			return _FileWriteStreamWriteChunk( Self, writeHandle, pvData, cubData );
+			var returnValue = _FileWriteStreamWriteChunk( Self, writeHandle, pvData, cubData );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWriteStreamClose", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileWriteStreamClose( IntPtr self, UGCFileWriteStreamHandle_t writeHandle );
-		private FFileWriteStreamClose _FileWriteStreamClose;
+		private static extern bool _FileWriteStreamClose( IntPtr self, UGCFileWriteStreamHandle_t writeHandle );
 		
 		#endregion
 		internal bool FileWriteStreamClose( UGCFileWriteStreamHandle_t writeHandle )
 		{
-			return _FileWriteStreamClose( Self, writeHandle );
+			var returnValue = _FileWriteStreamClose( Self, writeHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileWriteStreamCancel", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileWriteStreamCancel( IntPtr self, UGCFileWriteStreamHandle_t writeHandle );
-		private FFileWriteStreamCancel _FileWriteStreamCancel;
+		private static extern bool _FileWriteStreamCancel( IntPtr self, UGCFileWriteStreamHandle_t writeHandle );
 		
 		#endregion
 		internal bool FileWriteStreamCancel( UGCFileWriteStreamHandle_t writeHandle )
 		{
-			return _FileWriteStreamCancel( Self, writeHandle );
+			var returnValue = _FileWriteStreamCancel( Self, writeHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FileExists", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFileExists( IntPtr self, string pchFile );
-		private FFileExists _FileExists;
+		private static extern bool _FileExists( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal bool FileExists( string pchFile )
+		internal bool FileExists( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _FileExists( Self, pchFile );
+			var returnValue = _FileExists( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_FilePersisted", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FFilePersisted( IntPtr self, string pchFile );
-		private FFilePersisted _FilePersisted;
+		private static extern bool _FilePersisted( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal bool FilePersisted( string pchFile )
+		internal bool FilePersisted( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _FilePersisted( Self, pchFile );
+			var returnValue = _FilePersisted( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate int FGetFileSize( IntPtr self, string pchFile );
-		private FGetFileSize _GetFileSize;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetFileSize", CallingConvention = Platform.CC)]
+		private static extern int _GetFileSize( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal int GetFileSize( string pchFile )
+		internal int GetFileSize( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _GetFileSize( Self, pchFile );
+			var returnValue = _GetFileSize( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate long FGetFileTimestamp( IntPtr self, string pchFile );
-		private FGetFileTimestamp _GetFileTimestamp;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetFileTimestamp", CallingConvention = Platform.CC)]
+		private static extern long _GetFileTimestamp( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal long GetFileTimestamp( string pchFile )
+		internal long GetFileTimestamp( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _GetFileTimestamp( Self, pchFile );
+			var returnValue = _GetFileTimestamp( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate RemoteStoragePlatform FGetSyncPlatforms( IntPtr self, string pchFile );
-		private FGetSyncPlatforms _GetSyncPlatforms;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetSyncPlatforms", CallingConvention = Platform.CC)]
+		private static extern RemoteStoragePlatform _GetSyncPlatforms( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile );
 		
 		#endregion
-		internal RemoteStoragePlatform GetSyncPlatforms( string pchFile )
+		internal RemoteStoragePlatform GetSyncPlatforms( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchFile )
 		{
-			return _GetSyncPlatforms( Self, pchFile );
+			var returnValue = _GetSyncPlatforms( Self, pchFile );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate int FGetFileCount( IntPtr self );
-		private FGetFileCount _GetFileCount;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetFileCount", CallingConvention = Platform.CC)]
+		private static extern int _GetFileCount( IntPtr self );
 		
 		#endregion
 		internal int GetFileCount()
 		{
-			return _GetFileCount( Self );
+			var returnValue = _GetFileCount( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate IntPtr FGetFileNameAndSize( IntPtr self, int iFile, ref int pnFileSizeInBytes );
-		private FGetFileNameAndSize _GetFileNameAndSize;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetFileNameAndSize", CallingConvention = Platform.CC)]
+		private static extern Utf8StringPointer _GetFileNameAndSize( IntPtr self, int iFile, ref int pnFileSizeInBytes );
 		
 		#endregion
 		internal string GetFileNameAndSize( int iFile, ref int pnFileSizeInBytes )
 		{
-			return GetString( _GetFileNameAndSize( Self, iFile, ref pnFileSizeInBytes ) );
+			var returnValue = _GetFileNameAndSize( Self, iFile, ref pnFileSizeInBytes );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetQuota", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetQuota( IntPtr self, ref ulong pnTotalBytes, ref ulong puAvailableBytes );
-		private FGetQuota _GetQuota;
+		private static extern bool _GetQuota( IntPtr self, ref ulong pnTotalBytes, ref ulong puAvailableBytes );
 		
 		#endregion
 		internal bool GetQuota( ref ulong pnTotalBytes, ref ulong puAvailableBytes )
 		{
-			return _GetQuota( Self, ref pnTotalBytes, ref puAvailableBytes );
+			var returnValue = _GetQuota( Self, ref pnTotalBytes, ref puAvailableBytes );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_IsCloudEnabledForAccount", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsCloudEnabledForAccount( IntPtr self );
-		private FIsCloudEnabledForAccount _IsCloudEnabledForAccount;
+		private static extern bool _IsCloudEnabledForAccount( IntPtr self );
 		
 		#endregion
 		internal bool IsCloudEnabledForAccount()
 		{
-			return _IsCloudEnabledForAccount( Self );
+			var returnValue = _IsCloudEnabledForAccount( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_IsCloudEnabledForApp", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsCloudEnabledForApp( IntPtr self );
-		private FIsCloudEnabledForApp _IsCloudEnabledForApp;
+		private static extern bool _IsCloudEnabledForApp( IntPtr self );
 		
 		#endregion
 		internal bool IsCloudEnabledForApp()
 		{
-			return _IsCloudEnabledForApp( Self );
+			var returnValue = _IsCloudEnabledForApp( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSetCloudEnabledForApp( IntPtr self, [MarshalAs( UnmanagedType.U1 )] bool bEnabled );
-		private FSetCloudEnabledForApp _SetCloudEnabledForApp;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_SetCloudEnabledForApp", CallingConvention = Platform.CC)]
+		private static extern void _SetCloudEnabledForApp( IntPtr self, [MarshalAs( UnmanagedType.U1 )] bool bEnabled );
 		
 		#endregion
 		internal void SetCloudEnabledForApp( [MarshalAs( UnmanagedType.U1 )] bool bEnabled )
@@ -382,71 +297,82 @@ namespace Steamworks
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FUGCDownload( IntPtr self, UGCHandle_t hContent, uint unPriority );
-		private FUGCDownload _UGCDownload;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_UGCDownload", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _UGCDownload( IntPtr self, UGCHandle_t hContent, uint unPriority );
 		
 		#endregion
-		internal async Task<RemoteStorageDownloadUGCResult_t?> UGCDownload( UGCHandle_t hContent, uint unPriority )
+		internal CallResult<RemoteStorageDownloadUGCResult_t> UGCDownload( UGCHandle_t hContent, uint unPriority )
 		{
-			return await RemoteStorageDownloadUGCResult_t.GetResultAsync( _UGCDownload( Self, hContent, unPriority ) );
+			var returnValue = _UGCDownload( Self, hContent, unPriority );
+			return new CallResult<RemoteStorageDownloadUGCResult_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetUGCDownloadProgress", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetUGCDownloadProgress( IntPtr self, UGCHandle_t hContent, ref int pnBytesDownloaded, ref int pnBytesExpected );
-		private FGetUGCDownloadProgress _GetUGCDownloadProgress;
+		private static extern bool _GetUGCDownloadProgress( IntPtr self, UGCHandle_t hContent, ref int pnBytesDownloaded, ref int pnBytesExpected );
 		
 		#endregion
 		internal bool GetUGCDownloadProgress( UGCHandle_t hContent, ref int pnBytesDownloaded, ref int pnBytesExpected )
 		{
-			return _GetUGCDownloadProgress( Self, hContent, ref pnBytesDownloaded, ref pnBytesExpected );
+			var returnValue = _GetUGCDownloadProgress( Self, hContent, ref pnBytesDownloaded, ref pnBytesExpected );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetUGCDetails", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetUGCDetails( IntPtr self, UGCHandle_t hContent, ref AppId pnAppID, [In,Out] ref char[]  ppchName, ref int pnFileSizeInBytes, ref SteamId pSteamIDOwner );
-		private FGetUGCDetails _GetUGCDetails;
+		private static extern bool _GetUGCDetails( IntPtr self, UGCHandle_t hContent, ref AppId pnAppID, [In,Out] ref char[]  ppchName, ref int pnFileSizeInBytes, ref SteamId pSteamIDOwner );
 		
 		#endregion
 		internal bool GetUGCDetails( UGCHandle_t hContent, ref AppId pnAppID, [In,Out] ref char[]  ppchName, ref int pnFileSizeInBytes, ref SteamId pSteamIDOwner )
 		{
-			return _GetUGCDetails( Self, hContent, ref pnAppID, ref ppchName, ref pnFileSizeInBytes, ref pSteamIDOwner );
+			var returnValue = _GetUGCDetails( Self, hContent, ref pnAppID, ref ppchName, ref pnFileSizeInBytes, ref pSteamIDOwner );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate int FUGCRead( IntPtr self, UGCHandle_t hContent, IntPtr pvData, int cubDataToRead, uint cOffset, UGCReadAction eAction );
-		private FUGCRead _UGCRead;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_UGCRead", CallingConvention = Platform.CC)]
+		private static extern int _UGCRead( IntPtr self, UGCHandle_t hContent, IntPtr pvData, int cubDataToRead, uint cOffset, UGCReadAction eAction );
 		
 		#endregion
 		internal int UGCRead( UGCHandle_t hContent, IntPtr pvData, int cubDataToRead, uint cOffset, UGCReadAction eAction )
 		{
-			return _UGCRead( Self, hContent, pvData, cubDataToRead, cOffset, eAction );
+			var returnValue = _UGCRead( Self, hContent, pvData, cubDataToRead, cOffset, eAction );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate int FGetCachedUGCCount( IntPtr self );
-		private FGetCachedUGCCount _GetCachedUGCCount;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetCachedUGCCount", CallingConvention = Platform.CC)]
+		private static extern int _GetCachedUGCCount( IntPtr self );
 		
 		#endregion
 		internal int GetCachedUGCCount()
 		{
-			return _GetCachedUGCCount( Self );
+			var returnValue = _GetCachedUGCCount( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FUGCDownloadToLocation( IntPtr self, UGCHandle_t hContent, string pchLocation, uint unPriority );
-		private FUGCDownloadToLocation _UGCDownloadToLocation;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_GetCachedUGCHandle", CallingConvention = Platform.CC)]
+		private static extern UGCHandle_t _GetCachedUGCHandle( IntPtr self, int iCachedContent );
 		
 		#endregion
-		internal async Task<RemoteStorageDownloadUGCResult_t?> UGCDownloadToLocation( UGCHandle_t hContent, string pchLocation, uint unPriority )
+		internal UGCHandle_t GetCachedUGCHandle( int iCachedContent )
 		{
-			return await RemoteStorageDownloadUGCResult_t.GetResultAsync( _UGCDownloadToLocation( Self, hContent, pchLocation, unPriority ) );
+			var returnValue = _GetCachedUGCHandle( Self, iCachedContent );
+			return returnValue;
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamRemoteStorage_UGCDownloadToLocation", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _UGCDownloadToLocation( IntPtr self, UGCHandle_t hContent, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchLocation, uint unPriority );
+		
+		#endregion
+		internal CallResult<RemoteStorageDownloadUGCResult_t> UGCDownloadToLocation( UGCHandle_t hContent, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchLocation, uint unPriority )
+		{
+			var returnValue = _UGCDownloadToLocation( Self, hContent, pchLocation, unPriority );
+			return new CallResult<RemoteStorageDownloadUGCResult_t>( returnValue, IsServer );
 		}
 		
 	}

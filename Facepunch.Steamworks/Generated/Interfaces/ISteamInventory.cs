@@ -9,551 +9,506 @@ namespace Steamworks
 {
 	internal class ISteamInventory : SteamInterface
 	{
-		public override string InterfaceName => "STEAMINVENTORY_INTERFACE_V003";
 		
-		public override void InitInternals()
+		internal ISteamInventory( bool IsGameServer )
 		{
-			_GetResultStatus = Marshal.GetDelegateForFunctionPointer<FGetResultStatus>( Marshal.ReadIntPtr( VTable, 0) );
-			_GetResultItems = Marshal.GetDelegateForFunctionPointer<FGetResultItems>( Marshal.ReadIntPtr( VTable, 8) );
-			_GetResultItems_Windows = Marshal.GetDelegateForFunctionPointer<FGetResultItems_Windows>( Marshal.ReadIntPtr( VTable, 8) );
-			_GetResultItemProperty = Marshal.GetDelegateForFunctionPointer<FGetResultItemProperty>( Marshal.ReadIntPtr( VTable, 16) );
-			_GetResultTimestamp = Marshal.GetDelegateForFunctionPointer<FGetResultTimestamp>( Marshal.ReadIntPtr( VTable, 24) );
-			_CheckResultSteamID = Marshal.GetDelegateForFunctionPointer<FCheckResultSteamID>( Marshal.ReadIntPtr( VTable, 32) );
-			_DestroyResult = Marshal.GetDelegateForFunctionPointer<FDestroyResult>( Marshal.ReadIntPtr( VTable, 40) );
-			_GetAllItems = Marshal.GetDelegateForFunctionPointer<FGetAllItems>( Marshal.ReadIntPtr( VTable, 48) );
-			_GetItemsByID = Marshal.GetDelegateForFunctionPointer<FGetItemsByID>( Marshal.ReadIntPtr( VTable, 56) );
-			_SerializeResult = Marshal.GetDelegateForFunctionPointer<FSerializeResult>( Marshal.ReadIntPtr( VTable, 64) );
-			_DeserializeResult = Marshal.GetDelegateForFunctionPointer<FDeserializeResult>( Marshal.ReadIntPtr( VTable, 72) );
-			_GenerateItems = Marshal.GetDelegateForFunctionPointer<FGenerateItems>( Marshal.ReadIntPtr( VTable, 80) );
-			_GrantPromoItems = Marshal.GetDelegateForFunctionPointer<FGrantPromoItems>( Marshal.ReadIntPtr( VTable, 88) );
-			_AddPromoItem = Marshal.GetDelegateForFunctionPointer<FAddPromoItem>( Marshal.ReadIntPtr( VTable, 96) );
-			_AddPromoItems = Marshal.GetDelegateForFunctionPointer<FAddPromoItems>( Marshal.ReadIntPtr( VTable, 104) );
-			_ConsumeItem = Marshal.GetDelegateForFunctionPointer<FConsumeItem>( Marshal.ReadIntPtr( VTable, 112) );
-			_ExchangeItems = Marshal.GetDelegateForFunctionPointer<FExchangeItems>( Marshal.ReadIntPtr( VTable, 120) );
-			_TransferItemQuantity = Marshal.GetDelegateForFunctionPointer<FTransferItemQuantity>( Marshal.ReadIntPtr( VTable, 128) );
-			_SendItemDropHeartbeat = Marshal.GetDelegateForFunctionPointer<FSendItemDropHeartbeat>( Marshal.ReadIntPtr( VTable, 136) );
-			_TriggerItemDrop = Marshal.GetDelegateForFunctionPointer<FTriggerItemDrop>( Marshal.ReadIntPtr( VTable, 144) );
-			_TradeItems = Marshal.GetDelegateForFunctionPointer<FTradeItems>( Marshal.ReadIntPtr( VTable, 152) );
-			_LoadItemDefinitions = Marshal.GetDelegateForFunctionPointer<FLoadItemDefinitions>( Marshal.ReadIntPtr( VTable, 160) );
-			_GetItemDefinitionIDs = Marshal.GetDelegateForFunctionPointer<FGetItemDefinitionIDs>( Marshal.ReadIntPtr( VTable, 168) );
-			_GetItemDefinitionProperty = Marshal.GetDelegateForFunctionPointer<FGetItemDefinitionProperty>( Marshal.ReadIntPtr( VTable, 176) );
-			_RequestEligiblePromoItemDefinitionsIDs = Marshal.GetDelegateForFunctionPointer<FRequestEligiblePromoItemDefinitionsIDs>( Marshal.ReadIntPtr( VTable, 184) );
-			_GetEligiblePromoItemDefinitionIDs = Marshal.GetDelegateForFunctionPointer<FGetEligiblePromoItemDefinitionIDs>( Marshal.ReadIntPtr( VTable, 192) );
-			_StartPurchase = Marshal.GetDelegateForFunctionPointer<FStartPurchase>( Marshal.ReadIntPtr( VTable, 200) );
-			_RequestPrices = Marshal.GetDelegateForFunctionPointer<FRequestPrices>( Marshal.ReadIntPtr( VTable, 208) );
-			_GetNumItemsWithPrices = Marshal.GetDelegateForFunctionPointer<FGetNumItemsWithPrices>( Marshal.ReadIntPtr( VTable, 216) );
-			_GetItemsWithPrices = Marshal.GetDelegateForFunctionPointer<FGetItemsWithPrices>( Marshal.ReadIntPtr( VTable, 224) );
-			_GetItemPrice = Marshal.GetDelegateForFunctionPointer<FGetItemPrice>( Marshal.ReadIntPtr( VTable, 232) );
-			_StartUpdateProperties = Marshal.GetDelegateForFunctionPointer<FStartUpdateProperties>( Marshal.ReadIntPtr( VTable, 240) );
-			_RemoveProperty = Marshal.GetDelegateForFunctionPointer<FRemoveProperty>( Marshal.ReadIntPtr( VTable, 248) );
-			_SetProperty1 = Marshal.GetDelegateForFunctionPointer<FSetProperty1>( Marshal.ReadIntPtr( VTable, 256) );
-			_SetProperty2 = Marshal.GetDelegateForFunctionPointer<FSetProperty2>( Marshal.ReadIntPtr( VTable, 264) );
-			_SetProperty3 = Marshal.GetDelegateForFunctionPointer<FSetProperty3>( Marshal.ReadIntPtr( VTable, 272) );
-			_SetProperty4 = Marshal.GetDelegateForFunctionPointer<FSetProperty4>( Marshal.ReadIntPtr( VTable, 280) );
-			_SubmitUpdateProperties = Marshal.GetDelegateForFunctionPointer<FSubmitUpdateProperties>( Marshal.ReadIntPtr( VTable, 288) );
+			SetupInterface( IsGameServer );
 		}
-		internal override void Shutdown()
-		{
-			base.Shutdown();
-			
-			_GetResultStatus = null;
-			_GetResultItems = null;
-			_GetResultItems_Windows = null;
-			_GetResultItemProperty = null;
-			_GetResultTimestamp = null;
-			_CheckResultSteamID = null;
-			_DestroyResult = null;
-			_GetAllItems = null;
-			_GetItemsByID = null;
-			_SerializeResult = null;
-			_DeserializeResult = null;
-			_GenerateItems = null;
-			_GrantPromoItems = null;
-			_AddPromoItem = null;
-			_AddPromoItems = null;
-			_ConsumeItem = null;
-			_ExchangeItems = null;
-			_TransferItemQuantity = null;
-			_SendItemDropHeartbeat = null;
-			_TriggerItemDrop = null;
-			_TradeItems = null;
-			_LoadItemDefinitions = null;
-			_GetItemDefinitionIDs = null;
-			_GetItemDefinitionProperty = null;
-			_RequestEligiblePromoItemDefinitionsIDs = null;
-			_GetEligiblePromoItemDefinitionIDs = null;
-			_StartPurchase = null;
-			_RequestPrices = null;
-			_GetNumItemsWithPrices = null;
-			_GetItemsWithPrices = null;
-			_GetItemPrice = null;
-			_StartUpdateProperties = null;
-			_RemoveProperty = null;
-			_SetProperty1 = null;
-			_SetProperty2 = null;
-			_SetProperty3 = null;
-			_SetProperty4 = null;
-			_SubmitUpdateProperties = null;
-		}
+		
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_SteamInventory_v003", CallingConvention = Platform.CC)]
+		internal static extern IntPtr SteamAPI_SteamInventory_v003();
+		public override IntPtr GetUserInterfacePointer() => SteamAPI_SteamInventory_v003();
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_SteamGameServerInventory_v003", CallingConvention = Platform.CC)]
+		internal static extern IntPtr SteamAPI_SteamGameServerInventory_v003();
+		public override IntPtr GetServerInterfacePointer() => SteamAPI_SteamGameServerInventory_v003();
+		
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate Result FGetResultStatus( IntPtr self, SteamInventoryResult_t resultHandle );
-		private FGetResultStatus _GetResultStatus;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetResultStatus", CallingConvention = Platform.CC)]
+		private static extern Result _GetResultStatus( IntPtr self, SteamInventoryResult_t resultHandle );
 		
 		#endregion
+		/// <summary>
+		/// Find out the status of an asynchronous inventory result handle.
+		/// </summary>
 		internal Result GetResultStatus( SteamInventoryResult_t resultHandle )
 		{
-			return _GetResultStatus( Self, resultHandle );
+			var returnValue = _GetResultStatus( Self, resultHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetResultItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetResultItems( IntPtr self, SteamInventoryResult_t resultHandle, [In,Out] SteamItemDetails_t[]  pOutItemsArray, ref uint punOutItemsArraySize );
-		private FGetResultItems _GetResultItems;
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetResultItems_Windows( IntPtr self, SteamInventoryResult_t resultHandle, [In,Out] SteamItemDetails_t.Pack8[]  pOutItemsArray, ref uint punOutItemsArraySize );
-		private FGetResultItems_Windows _GetResultItems_Windows;
+		private static extern bool _GetResultItems( IntPtr self, SteamInventoryResult_t resultHandle, [In,Out] SteamItemDetails_t[]  pOutItemsArray, ref uint punOutItemsArraySize );
 		
 		#endregion
+		/// <summary>
+		/// Copies the contents of a result set into a flat array. The specific contents of the result set depend on which query which was used.
+		/// </summary>
 		internal bool GetResultItems( SteamInventoryResult_t resultHandle, [In,Out] SteamItemDetails_t[]  pOutItemsArray, ref uint punOutItemsArraySize )
 		{
-			if ( Config.Os == OsType.Windows )
-			{
-				SteamItemDetails_t.Pack8[] pOutItemsArray_windows = pOutItemsArray == null ? null : new SteamItemDetails_t.Pack8[ pOutItemsArray.Length ];
-				if ( pOutItemsArray_windows != null )
-				{
-					for ( int i=0; i<pOutItemsArray.Length; i++ )
-					{
-						pOutItemsArray_windows[i] = pOutItemsArray[i];
-					}
-				}
-				var retVal = _GetResultItems_Windows( Self, resultHandle, pOutItemsArray_windows, ref punOutItemsArraySize );
-				if ( pOutItemsArray_windows != null )
-				{
-					for ( int i=0; i<pOutItemsArray.Length; i++ )
-					{
-						pOutItemsArray[i] = pOutItemsArray_windows[i];
-					}
-				}
-				return retVal;
-			}
-			
-			return _GetResultItems( Self, resultHandle, pOutItemsArray, ref punOutItemsArraySize );
+			var returnValue = _GetResultItems( Self, resultHandle, pOutItemsArray, ref punOutItemsArraySize );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetResultItemProperty", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetResultItemProperty( IntPtr self, SteamInventoryResult_t resultHandle, uint unItemIndex, string pchPropertyName, StringBuilder pchValueBuffer, ref uint punValueBufferSizeOut );
-		private FGetResultItemProperty _GetResultItemProperty;
+		private static extern bool _GetResultItemProperty( IntPtr self, SteamInventoryResult_t resultHandle, uint unItemIndex, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, IntPtr pchValueBuffer, ref uint punValueBufferSizeOut );
 		
 		#endregion
-		internal bool GetResultItemProperty( SteamInventoryResult_t resultHandle, uint unItemIndex, string pchPropertyName, StringBuilder pchValueBuffer, ref uint punValueBufferSizeOut )
+		internal bool GetResultItemProperty( SteamInventoryResult_t resultHandle, uint unItemIndex, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, out string pchValueBuffer, ref uint punValueBufferSizeOut )
 		{
-			return _GetResultItemProperty( Self, resultHandle, unItemIndex, pchPropertyName, pchValueBuffer, ref punValueBufferSizeOut );
+			IntPtr mempchValueBuffer = Helpers.TakeMemory();
+			var returnValue = _GetResultItemProperty( Self, resultHandle, unItemIndex, pchPropertyName, mempchValueBuffer, ref punValueBufferSizeOut );
+			pchValueBuffer = Helpers.MemoryToString( mempchValueBuffer );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetResultTimestamp( IntPtr self, SteamInventoryResult_t resultHandle );
-		private FGetResultTimestamp _GetResultTimestamp;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetResultTimestamp", CallingConvention = Platform.CC)]
+		private static extern uint _GetResultTimestamp( IntPtr self, SteamInventoryResult_t resultHandle );
 		
 		#endregion
+		/// <summary>
+		/// Returns the server time at which the result was generated. Compare against the value of IClientUtils::GetServerRealTime() to determine age.
+		/// </summary>
 		internal uint GetResultTimestamp( SteamInventoryResult_t resultHandle )
 		{
-			return _GetResultTimestamp( Self, resultHandle );
+			var returnValue = _GetResultTimestamp( Self, resultHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_CheckResultSteamID", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FCheckResultSteamID( IntPtr self, SteamInventoryResult_t resultHandle, SteamId steamIDExpected );
-		private FCheckResultSteamID _CheckResultSteamID;
+		private static extern bool _CheckResultSteamID( IntPtr self, SteamInventoryResult_t resultHandle, SteamId steamIDExpected );
 		
 		#endregion
+		/// <summary>
+		/// Returns true if the result belongs to the target steam ID or false if the result does not. This is important when using DeserializeResult to verify that a remote player is not pretending to have a different users inventory.
+		/// </summary>
 		internal bool CheckResultSteamID( SteamInventoryResult_t resultHandle, SteamId steamIDExpected )
 		{
-			return _CheckResultSteamID( Self, resultHandle, steamIDExpected );
+			var returnValue = _CheckResultSteamID( Self, resultHandle, steamIDExpected );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FDestroyResult( IntPtr self, SteamInventoryResult_t resultHandle );
-		private FDestroyResult _DestroyResult;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_DestroyResult", CallingConvention = Platform.CC)]
+		private static extern void _DestroyResult( IntPtr self, SteamInventoryResult_t resultHandle );
 		
 		#endregion
+		/// <summary>
+		/// Destroys a result handle and frees all associated memory.
+		/// </summary>
 		internal void DestroyResult( SteamInventoryResult_t resultHandle )
 		{
 			_DestroyResult( Self, resultHandle );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetAllItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetAllItems( IntPtr self, ref SteamInventoryResult_t pResultHandle );
-		private FGetAllItems _GetAllItems;
+		private static extern bool _GetAllItems( IntPtr self, ref SteamInventoryResult_t pResultHandle );
 		
 		#endregion
+		/// <summary>
+		/// Captures the entire state of the current users Steam inventory.
+		/// </summary>
 		internal bool GetAllItems( ref SteamInventoryResult_t pResultHandle )
 		{
-			return _GetAllItems( Self, ref pResultHandle );
+			var returnValue = _GetAllItems( Self, ref pResultHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetItemsByID", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetItemsByID( IntPtr self, ref SteamInventoryResult_t pResultHandle, ref InventoryItemId pInstanceIDs, uint unCountInstanceIDs );
-		private FGetItemsByID _GetItemsByID;
+		private static extern bool _GetItemsByID( IntPtr self, ref SteamInventoryResult_t pResultHandle, ref InventoryItemId pInstanceIDs, uint unCountInstanceIDs );
 		
 		#endregion
+		/// <summary>
+		/// Captures the state of a subset of the current users Steam inventory identified by an array of item instance IDs.
+		/// </summary>
 		internal bool GetItemsByID( ref SteamInventoryResult_t pResultHandle, ref InventoryItemId pInstanceIDs, uint unCountInstanceIDs )
 		{
-			return _GetItemsByID( Self, ref pResultHandle, ref pInstanceIDs, unCountInstanceIDs );
+			var returnValue = _GetItemsByID( Self, ref pResultHandle, ref pInstanceIDs, unCountInstanceIDs );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SerializeResult", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSerializeResult( IntPtr self, SteamInventoryResult_t resultHandle, IntPtr pOutBuffer, ref uint punOutBufferSize );
-		private FSerializeResult _SerializeResult;
+		private static extern bool _SerializeResult( IntPtr self, SteamInventoryResult_t resultHandle, IntPtr pOutBuffer, ref uint punOutBufferSize );
 		
 		#endregion
 		internal bool SerializeResult( SteamInventoryResult_t resultHandle, IntPtr pOutBuffer, ref uint punOutBufferSize )
 		{
-			return _SerializeResult( Self, resultHandle, pOutBuffer, ref punOutBufferSize );
+			var returnValue = _SerializeResult( Self, resultHandle, pOutBuffer, ref punOutBufferSize );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_DeserializeResult", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FDeserializeResult( IntPtr self, ref SteamInventoryResult_t pOutResultHandle, IntPtr pBuffer, uint unBufferSize, [MarshalAs( UnmanagedType.U1 )] bool bRESERVED_MUST_BE_FALSE );
-		private FDeserializeResult _DeserializeResult;
+		private static extern bool _DeserializeResult( IntPtr self, ref SteamInventoryResult_t pOutResultHandle, IntPtr pBuffer, uint unBufferSize, [MarshalAs( UnmanagedType.U1 )] bool bRESERVED_MUST_BE_FALSE );
 		
 		#endregion
 		internal bool DeserializeResult( ref SteamInventoryResult_t pOutResultHandle, IntPtr pBuffer, uint unBufferSize, [MarshalAs( UnmanagedType.U1 )] bool bRESERVED_MUST_BE_FALSE )
 		{
-			return _DeserializeResult( Self, ref pOutResultHandle, pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE );
+			var returnValue = _DeserializeResult( Self, ref pOutResultHandle, pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GenerateItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGenerateItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength );
-		private FGenerateItems _GenerateItems;
+		private static extern bool _GenerateItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength );
 		
 		#endregion
 		internal bool GenerateItems( ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength )
 		{
-			return _GenerateItems( Self, ref pResultHandle, pArrayItemDefs, punArrayQuantity, unArrayLength );
+			var returnValue = _GenerateItems( Self, ref pResultHandle, pArrayItemDefs, punArrayQuantity, unArrayLength );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GrantPromoItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGrantPromoItems( IntPtr self, ref SteamInventoryResult_t pResultHandle );
-		private FGrantPromoItems _GrantPromoItems;
+		private static extern bool _GrantPromoItems( IntPtr self, ref SteamInventoryResult_t pResultHandle );
 		
 		#endregion
+		/// <summary>
+		/// GrantPromoItems() checks the list of promotional items for which the user may be eligible and grants the items (one time only).
+		/// </summary>
 		internal bool GrantPromoItems( ref SteamInventoryResult_t pResultHandle )
 		{
-			return _GrantPromoItems( Self, ref pResultHandle );
+			var returnValue = _GrantPromoItems( Self, ref pResultHandle );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_AddPromoItem", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FAddPromoItem( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryDefId itemDef );
-		private FAddPromoItem _AddPromoItem;
+		private static extern bool _AddPromoItem( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryDefId itemDef );
 		
 		#endregion
 		internal bool AddPromoItem( ref SteamInventoryResult_t pResultHandle, InventoryDefId itemDef )
 		{
-			return _AddPromoItem( Self, ref pResultHandle, itemDef );
+			var returnValue = _AddPromoItem( Self, ref pResultHandle, itemDef );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_AddPromoItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FAddPromoItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, uint unArrayLength );
-		private FAddPromoItems _AddPromoItems;
+		private static extern bool _AddPromoItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, uint unArrayLength );
 		
 		#endregion
 		internal bool AddPromoItems( ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayItemDefs, uint unArrayLength )
 		{
-			return _AddPromoItems( Self, ref pResultHandle, pArrayItemDefs, unArrayLength );
+			var returnValue = _AddPromoItems( Self, ref pResultHandle, pArrayItemDefs, unArrayLength );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_ConsumeItem", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FConsumeItem( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryItemId itemConsume, uint unQuantity );
-		private FConsumeItem _ConsumeItem;
+		private static extern bool _ConsumeItem( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryItemId itemConsume, uint unQuantity );
 		
 		#endregion
+		/// <summary>
+		/// ConsumeItem() removes items from the inventory permanently.
+		/// </summary>
 		internal bool ConsumeItem( ref SteamInventoryResult_t pResultHandle, InventoryItemId itemConsume, uint unQuantity )
 		{
-			return _ConsumeItem( Self, ref pResultHandle, itemConsume, unQuantity );
+			var returnValue = _ConsumeItem( Self, ref pResultHandle, itemConsume, unQuantity );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_ExchangeItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FExchangeItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayGenerate, [In,Out] uint[]  punArrayGenerateQuantity, uint unArrayGenerateLength, [In,Out] InventoryItemId[]  pArrayDestroy, [In,Out] uint[]  punArrayDestroyQuantity, uint unArrayDestroyLength );
-		private FExchangeItems _ExchangeItems;
+		private static extern bool _ExchangeItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayGenerate, [In,Out] uint[]  punArrayGenerateQuantity, uint unArrayGenerateLength, [In,Out] InventoryItemId[]  pArrayDestroy, [In,Out] uint[]  punArrayDestroyQuantity, uint unArrayDestroyLength );
 		
 		#endregion
 		internal bool ExchangeItems( ref SteamInventoryResult_t pResultHandle, [In,Out] InventoryDefId[]  pArrayGenerate, [In,Out] uint[]  punArrayGenerateQuantity, uint unArrayGenerateLength, [In,Out] InventoryItemId[]  pArrayDestroy, [In,Out] uint[]  punArrayDestroyQuantity, uint unArrayDestroyLength )
 		{
-			return _ExchangeItems( Self, ref pResultHandle, pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength );
+			var returnValue = _ExchangeItems( Self, ref pResultHandle, pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_TransferItemQuantity", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FTransferItemQuantity( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryItemId itemIdSource, uint unQuantity, InventoryItemId itemIdDest );
-		private FTransferItemQuantity _TransferItemQuantity;
+		private static extern bool _TransferItemQuantity( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryItemId itemIdSource, uint unQuantity, InventoryItemId itemIdDest );
 		
 		#endregion
 		internal bool TransferItemQuantity( ref SteamInventoryResult_t pResultHandle, InventoryItemId itemIdSource, uint unQuantity, InventoryItemId itemIdDest )
 		{
-			return _TransferItemQuantity( Self, ref pResultHandle, itemIdSource, unQuantity, itemIdDest );
+			var returnValue = _TransferItemQuantity( Self, ref pResultHandle, itemIdSource, unQuantity, itemIdDest );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSendItemDropHeartbeat( IntPtr self );
-		private FSendItemDropHeartbeat _SendItemDropHeartbeat;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SendItemDropHeartbeat", CallingConvention = Platform.CC)]
+		private static extern void _SendItemDropHeartbeat( IntPtr self );
 		
 		#endregion
+		/// <summary>
+		/// Deprecated method. Playtime accounting is performed on the Steam servers.
+		/// </summary>
 		internal void SendItemDropHeartbeat()
 		{
 			_SendItemDropHeartbeat( Self );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_TriggerItemDrop", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FTriggerItemDrop( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryDefId dropListDefinition );
-		private FTriggerItemDrop _TriggerItemDrop;
+		private static extern bool _TriggerItemDrop( IntPtr self, ref SteamInventoryResult_t pResultHandle, InventoryDefId dropListDefinition );
 		
 		#endregion
+		/// <summary>
+		/// Playtime credit must be consumed and turned into item drops by your game.
+		/// </summary>
 		internal bool TriggerItemDrop( ref SteamInventoryResult_t pResultHandle, InventoryDefId dropListDefinition )
 		{
-			return _TriggerItemDrop( Self, ref pResultHandle, dropListDefinition );
+			var returnValue = _TriggerItemDrop( Self, ref pResultHandle, dropListDefinition );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_TradeItems", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FTradeItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, SteamId steamIDTradePartner, [In,Out] InventoryItemId[]  pArrayGive, [In,Out] uint[]  pArrayGiveQuantity, uint nArrayGiveLength, [In,Out] InventoryItemId[]  pArrayGet, [In,Out] uint[]  pArrayGetQuantity, uint nArrayGetLength );
-		private FTradeItems _TradeItems;
+		private static extern bool _TradeItems( IntPtr self, ref SteamInventoryResult_t pResultHandle, SteamId steamIDTradePartner, [In,Out] InventoryItemId[]  pArrayGive, [In,Out] uint[]  pArrayGiveQuantity, uint nArrayGiveLength, [In,Out] InventoryItemId[]  pArrayGet, [In,Out] uint[]  pArrayGetQuantity, uint nArrayGetLength );
 		
 		#endregion
 		internal bool TradeItems( ref SteamInventoryResult_t pResultHandle, SteamId steamIDTradePartner, [In,Out] InventoryItemId[]  pArrayGive, [In,Out] uint[]  pArrayGiveQuantity, uint nArrayGiveLength, [In,Out] InventoryItemId[]  pArrayGet, [In,Out] uint[]  pArrayGetQuantity, uint nArrayGetLength )
 		{
-			return _TradeItems( Self, ref pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength );
+			var returnValue = _TradeItems( Self, ref pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_LoadItemDefinitions", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FLoadItemDefinitions( IntPtr self );
-		private FLoadItemDefinitions _LoadItemDefinitions;
+		private static extern bool _LoadItemDefinitions( IntPtr self );
 		
 		#endregion
+		/// <summary>
+		/// LoadItemDefinitions triggers the automatic load and refresh of item definitions.
+		/// </summary>
 		internal bool LoadItemDefinitions()
 		{
-			return _LoadItemDefinitions( Self );
+			var returnValue = _LoadItemDefinitions( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetItemDefinitionIDs", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetItemDefinitionIDs( IntPtr self, [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize );
-		private FGetItemDefinitionIDs _GetItemDefinitionIDs;
+		private static extern bool _GetItemDefinitionIDs( IntPtr self, [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize );
 		
 		#endregion
 		internal bool GetItemDefinitionIDs( [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize )
 		{
-			return _GetItemDefinitionIDs( Self, pItemDefIDs, ref punItemDefIDsArraySize );
+			var returnValue = _GetItemDefinitionIDs( Self, pItemDefIDs, ref punItemDefIDsArraySize );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetItemDefinitionProperty", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetItemDefinitionProperty( IntPtr self, InventoryDefId iDefinition, string pchPropertyName, StringBuilder pchValueBuffer, ref uint punValueBufferSizeOut );
-		private FGetItemDefinitionProperty _GetItemDefinitionProperty;
+		private static extern bool _GetItemDefinitionProperty( IntPtr self, InventoryDefId iDefinition, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, IntPtr pchValueBuffer, ref uint punValueBufferSizeOut );
 		
 		#endregion
-		internal bool GetItemDefinitionProperty( InventoryDefId iDefinition, string pchPropertyName, StringBuilder pchValueBuffer, ref uint punValueBufferSizeOut )
+		internal bool GetItemDefinitionProperty( InventoryDefId iDefinition, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, out string pchValueBuffer, ref uint punValueBufferSizeOut )
 		{
-			return _GetItemDefinitionProperty( Self, iDefinition, pchPropertyName, pchValueBuffer, ref punValueBufferSizeOut );
+			IntPtr mempchValueBuffer = Helpers.TakeMemory();
+			var returnValue = _GetItemDefinitionProperty( Self, iDefinition, pchPropertyName, mempchValueBuffer, ref punValueBufferSizeOut );
+			pchValueBuffer = Helpers.MemoryToString( mempchValueBuffer );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FRequestEligiblePromoItemDefinitionsIDs( IntPtr self, SteamId steamID );
-		private FRequestEligiblePromoItemDefinitionsIDs _RequestEligiblePromoItemDefinitionsIDs;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_RequestEligiblePromoItemDefinitionsIDs", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _RequestEligiblePromoItemDefinitionsIDs( IntPtr self, SteamId steamID );
 		
 		#endregion
-		internal async Task<SteamInventoryEligiblePromoItemDefIDs_t?> RequestEligiblePromoItemDefinitionsIDs( SteamId steamID )
+		internal CallResult<SteamInventoryEligiblePromoItemDefIDs_t> RequestEligiblePromoItemDefinitionsIDs( SteamId steamID )
 		{
-			return await SteamInventoryEligiblePromoItemDefIDs_t.GetResultAsync( _RequestEligiblePromoItemDefinitionsIDs( Self, steamID ) );
+			var returnValue = _RequestEligiblePromoItemDefinitionsIDs( Self, steamID );
+			return new CallResult<SteamInventoryEligiblePromoItemDefIDs_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetEligiblePromoItemDefinitionIDs", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetEligiblePromoItemDefinitionIDs( IntPtr self, SteamId steamID, [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize );
-		private FGetEligiblePromoItemDefinitionIDs _GetEligiblePromoItemDefinitionIDs;
+		private static extern bool _GetEligiblePromoItemDefinitionIDs( IntPtr self, SteamId steamID, [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize );
 		
 		#endregion
 		internal bool GetEligiblePromoItemDefinitionIDs( SteamId steamID, [In,Out] InventoryDefId[]  pItemDefIDs, ref uint punItemDefIDsArraySize )
 		{
-			return _GetEligiblePromoItemDefinitionIDs( Self, steamID, pItemDefIDs, ref punItemDefIDsArraySize );
+			var returnValue = _GetEligiblePromoItemDefinitionIDs( Self, steamID, pItemDefIDs, ref punItemDefIDsArraySize );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FStartPurchase( IntPtr self, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength );
-		private FStartPurchase _StartPurchase;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_StartPurchase", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _StartPurchase( IntPtr self, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength );
 		
 		#endregion
-		internal async Task<SteamInventoryStartPurchaseResult_t?> StartPurchase( [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength )
+		internal CallResult<SteamInventoryStartPurchaseResult_t> StartPurchase( [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] uint[]  punArrayQuantity, uint unArrayLength )
 		{
-			return await SteamInventoryStartPurchaseResult_t.GetResultAsync( _StartPurchase( Self, pArrayItemDefs, punArrayQuantity, unArrayLength ) );
+			var returnValue = _StartPurchase( Self, pArrayItemDefs, punArrayQuantity, unArrayLength );
+			return new CallResult<SteamInventoryStartPurchaseResult_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FRequestPrices( IntPtr self );
-		private FRequestPrices _RequestPrices;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_RequestPrices", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _RequestPrices( IntPtr self );
 		
 		#endregion
-		internal async Task<SteamInventoryRequestPricesResult_t?> RequestPrices()
+		internal CallResult<SteamInventoryRequestPricesResult_t> RequestPrices()
 		{
-			return await SteamInventoryRequestPricesResult_t.GetResultAsync( _RequestPrices( Self ) );
+			var returnValue = _RequestPrices( Self );
+			return new CallResult<SteamInventoryRequestPricesResult_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetNumItemsWithPrices( IntPtr self );
-		private FGetNumItemsWithPrices _GetNumItemsWithPrices;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetNumItemsWithPrices", CallingConvention = Platform.CC)]
+		private static extern uint _GetNumItemsWithPrices( IntPtr self );
 		
 		#endregion
 		internal uint GetNumItemsWithPrices()
 		{
-			return _GetNumItemsWithPrices( Self );
+			var returnValue = _GetNumItemsWithPrices( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetItemsWithPrices", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetItemsWithPrices( IntPtr self, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] ulong[]  pCurrentPrices, [In,Out] ulong[]  pBasePrices, uint unArrayLength );
-		private FGetItemsWithPrices _GetItemsWithPrices;
+		private static extern bool _GetItemsWithPrices( IntPtr self, [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] ulong[]  pCurrentPrices, [In,Out] ulong[]  pBasePrices, uint unArrayLength );
 		
 		#endregion
 		internal bool GetItemsWithPrices( [In,Out] InventoryDefId[]  pArrayItemDefs, [In,Out] ulong[]  pCurrentPrices, [In,Out] ulong[]  pBasePrices, uint unArrayLength )
 		{
-			return _GetItemsWithPrices( Self, pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength );
+			var returnValue = _GetItemsWithPrices( Self, pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_GetItemPrice", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetItemPrice( IntPtr self, InventoryDefId iDefinition, ref ulong pCurrentPrice, ref ulong pBasePrice );
-		private FGetItemPrice _GetItemPrice;
+		private static extern bool _GetItemPrice( IntPtr self, InventoryDefId iDefinition, ref ulong pCurrentPrice, ref ulong pBasePrice );
 		
 		#endregion
 		internal bool GetItemPrice( InventoryDefId iDefinition, ref ulong pCurrentPrice, ref ulong pBasePrice )
 		{
-			return _GetItemPrice( Self, iDefinition, ref pCurrentPrice, ref pBasePrice );
+			var returnValue = _GetItemPrice( Self, iDefinition, ref pCurrentPrice, ref pBasePrice );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamInventoryUpdateHandle_t FStartUpdateProperties( IntPtr self );
-		private FStartUpdateProperties _StartUpdateProperties;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_StartUpdateProperties", CallingConvention = Platform.CC)]
+		private static extern SteamInventoryUpdateHandle_t _StartUpdateProperties( IntPtr self );
 		
 		#endregion
 		internal SteamInventoryUpdateHandle_t StartUpdateProperties()
 		{
-			return _StartUpdateProperties( Self );
+			var returnValue = _StartUpdateProperties( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_RemoveProperty", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FRemoveProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName );
-		private FRemoveProperty _RemoveProperty;
+		private static extern bool _RemoveProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName );
 		
 		#endregion
-		internal bool RemoveProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName )
+		internal bool RemoveProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName )
 		{
-			return _RemoveProperty( Self, handle, nItemID, pchPropertyName );
+			var returnValue = _RemoveProperty( Self, handle, nItemID, pchPropertyName );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SetPropertyString", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSetProperty1( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, string pchPropertyValue );
-		private FSetProperty1 _SetProperty1;
+		private static extern bool _SetProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyValue );
 		
 		#endregion
-		internal bool SetProperty1( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, string pchPropertyValue )
+		internal bool SetProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyValue )
 		{
-			return _SetProperty1( Self, handle, nItemID, pchPropertyName, pchPropertyValue );
+			var returnValue = _SetProperty( Self, handle, nItemID, pchPropertyName, pchPropertyValue );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SetPropertyBool", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSetProperty2( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, [MarshalAs( UnmanagedType.U1 )] bool bValue );
-		private FSetProperty2 _SetProperty2;
+		private static extern bool _SetProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, [MarshalAs( UnmanagedType.U1 )] bool bValue );
 		
 		#endregion
-		internal bool SetProperty2( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, [MarshalAs( UnmanagedType.U1 )] bool bValue )
+		internal bool SetProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, [MarshalAs( UnmanagedType.U1 )] bool bValue )
 		{
-			return _SetProperty2( Self, handle, nItemID, pchPropertyName, bValue );
+			var returnValue = _SetProperty( Self, handle, nItemID, pchPropertyName, bValue );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SetPropertyInt64", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSetProperty3( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, long nValue );
-		private FSetProperty3 _SetProperty3;
+		private static extern bool _SetProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, long nValue );
 		
 		#endregion
-		internal bool SetProperty3( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, long nValue )
+		internal bool SetProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, long nValue )
 		{
-			return _SetProperty3( Self, handle, nItemID, pchPropertyName, nValue );
+			var returnValue = _SetProperty( Self, handle, nItemID, pchPropertyName, nValue );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SetPropertyFloat", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSetProperty4( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, float flValue );
-		private FSetProperty4 _SetProperty4;
+		private static extern bool _SetProperty( IntPtr self, SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, float flValue );
 		
 		#endregion
-		internal bool SetProperty4( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, string pchPropertyName, float flValue )
+		internal bool SetProperty( SteamInventoryUpdateHandle_t handle, InventoryItemId nItemID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchPropertyName, float flValue )
 		{
-			return _SetProperty4( Self, handle, nItemID, pchPropertyName, flValue );
+			var returnValue = _SetProperty( Self, handle, nItemID, pchPropertyName, flValue );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_SubmitUpdateProperties", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FSubmitUpdateProperties( IntPtr self, SteamInventoryUpdateHandle_t handle, ref SteamInventoryResult_t pResultHandle );
-		private FSubmitUpdateProperties _SubmitUpdateProperties;
+		private static extern bool _SubmitUpdateProperties( IntPtr self, SteamInventoryUpdateHandle_t handle, ref SteamInventoryResult_t pResultHandle );
 		
 		#endregion
 		internal bool SubmitUpdateProperties( SteamInventoryUpdateHandle_t handle, ref SteamInventoryResult_t pResultHandle )
 		{
-			return _SubmitUpdateProperties( Self, handle, ref pResultHandle );
+			var returnValue = _SubmitUpdateProperties( Self, handle, ref pResultHandle );
+			return returnValue;
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamInventory_InspectItem", CallingConvention = Platform.CC)]
+		[return: MarshalAs( UnmanagedType.I1 )]
+		private static extern bool _InspectItem( IntPtr self, ref SteamInventoryResult_t pResultHandle, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchItemToken );
+		
+		#endregion
+		/// <summary>
+		/// Look up the given token and return a pseudo-Inventory item.
+		/// </summary>
+		internal bool InspectItem( ref SteamInventoryResult_t pResultHandle, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchItemToken )
+		{
+			var returnValue = _InspectItem( Self, ref pResultHandle, pchItemToken );
+			return returnValue;
 		}
 		
 	}

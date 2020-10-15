@@ -7,34 +7,22 @@ using Steamworks.Data;
 
 namespace Steamworks
 {
-	public static class SteamUserStats
+	public class SteamUserStats : SteamClientClass<SteamUserStats>
 	{
-		static ISteamUserStats _internal;
-		internal static ISteamUserStats Internal
-		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamUserStats();
-					_internal.Init();
+		internal static ISteamUserStats Internal => Interface as ISteamUserStats;
 
-					RequestCurrentStats();
-				}
-
-				return _internal;
-			}
-		}
-		internal static void Shutdown()
+		internal override void InitializeInterface( bool server )
 		{
-			_internal = null;
+			SetInterface( server, new ISteamUserStats( server ) );
+			InstallEvents();
+			RequestCurrentStats();
 		}
 
 		public static bool StatsRecieved { get; internal set; }
 
 		internal static void InstallEvents()
 		{
-			UserStatsReceived_t.Install( x =>
+			Dispatch.Install<UserStatsReceived_t>( x =>
 			{
 				if ( x.SteamIDUser == SteamClient.SteamId )
 					StatsRecieved = true;
@@ -42,10 +30,10 @@ namespace Steamworks
 				OnUserStatsReceived?.Invoke( x.SteamIDUser, x.Result );
 			} );
 
-			UserStatsStored_t.Install( x => OnUserStatsStored?.Invoke( x.Result ) );
-			UserAchievementStored_t.Install( x => OnAchievementProgress?.Invoke( new Achievement( x.AchievementName ), (int) x.CurProgress, (int)x.MaxProgress ) );
-			UserStatsUnloaded_t.Install( x => OnUserStatsUnloaded?.Invoke( x.SteamIDUser ) );
-			UserAchievementIconFetched_t.Install( x => OnAchievementIconFetched?.Invoke( x.AchievementName, x.IconHandle ) );
+			Dispatch.Install<UserStatsStored_t>( x => OnUserStatsStored?.Invoke( x.Result ) );
+			Dispatch.Install<UserAchievementStored_t>( x => OnAchievementProgress?.Invoke( new Achievement( x.AchievementNameUTF8() ), (int) x.CurProgress, (int)x.MaxProgress ) );
+			Dispatch.Install<UserStatsUnloaded_t>( x => OnUserStatsUnloaded?.Invoke( x.SteamIDUser ) );
+			Dispatch.Install<UserAchievementIconFetched_t>( x => OnAchievementIconFetched?.Invoke( x.AchievementNameUTF8(), x.IconHandle ) );
 		}
 
 
@@ -93,6 +81,23 @@ namespace Steamworks
 		}
 
 		/// <summary>
+		/// Show the user a pop-up notification with the current progress toward an achievement.
+		/// Will return false if RequestCurrentStats has not completed and successfully returned 
+		/// its callback, if the achievement doesn't exist/has unpublished changes in the app's 
+		/// Steamworks Admin page, or if the achievement is unlocked. 
+		/// </summary>
+		public static bool IndicateAchievementProgress( string achName, int curProg, int maxProg )
+		{
+			if ( string.IsNullOrEmpty( achName ) )
+				throw new ArgumentNullException( "Achievement string is null or empty" );
+
+			if ( curProg >= maxProg )
+				throw new ArgumentException( $" Current progress [{curProg}] arguement toward achievement greater than or equal to max [{maxProg}]" );
+
+			return Internal.IndicateAchievementProgress( achName, (uint)curProg, (uint)maxProg );
+		}
+
+		/// <summary>
 		/// Tries to get the number of players currently playing this game.
 		/// Or -1 if failed.
 		/// </summary>
@@ -130,6 +135,22 @@ namespace Steamworks
 		{
 			return Internal.RequestCurrentStats();
 		}
+
+		/// <summary>
+		/// Asynchronously fetches global stats data, which is available for stats marked as 
+		/// "aggregated" in the App Admin panel of the Steamworks website.
+		/// You must have called RequestCurrentStats and it needs to return successfully via 
+		/// its callback prior to calling this.
+		/// </summary>
+		/// <param name="days">How many days of day-by-day history to retrieve in addition to the overall totals. The limit is 60.</param>
+		/// <returns>OK indicates success, InvalidState means you need to call RequestCurrentStats first, Fail means the remote call failed</returns>
+		public static async Task<Result> RequestGlobalStatsAsync( int days )
+		{
+			var result = await SteamUserStats.Internal.RequestGlobalStats( days );
+			if ( !result.HasValue ) return Result.Fail;
+			return result.Value.Result;
+		}
+
 
 		/// <summary>
 		/// Gets a leaderboard by name, it will create it if it's not yet created.
@@ -190,7 +211,7 @@ namespace Steamworks
 		/// </summary>
 		public static bool SetStat( string name, int value )
 		{
-			return Internal.SetStat1( name, value );
+			return Internal.SetStat( name, value );
 		}
 
 		/// <summary>
@@ -199,7 +220,7 @@ namespace Steamworks
 		/// </summary>
 		public static bool SetStat( string name, float value )
 		{
-			return Internal.SetStat2( name, value );
+			return Internal.SetStat( name, value );
 		}
 
 		/// <summary>
@@ -208,7 +229,7 @@ namespace Steamworks
 		public static int GetStatInt( string name )
 		{
 			int data = 0;
-			Internal.GetStat1( name, ref data );
+			Internal.GetStat( name, ref data );
 			return data;
 		}
 
@@ -218,7 +239,7 @@ namespace Steamworks
 		public static float GetStatFloat( string name )
 		{
 			float data = 0;
-			Internal.GetStat2( name, ref data );
+			Internal.GetStat( name, ref data );
 			return data;
 		}
 

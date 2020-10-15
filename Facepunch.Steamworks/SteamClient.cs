@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Steamworks.Data;
 
 namespace Steamworks
 {
@@ -10,12 +11,14 @@ namespace Steamworks
 	{
 		static bool initialized;
 
-		public static void Init( uint appid )
+		/// <summary>
+		/// Initialize the steam client.
+		/// If asyncCallbacks is false you need to call RunCallbacks manually every frame.
+		/// </summary>
+		public static void Init( uint appid, bool asyncCallbacks = true )
 		{
-			if ( IntPtr.Size != 8 )
-			{
-				throw new System.Exception( "Only 64bit processes are currently supported" );
-			}
+			if ( initialized )
+				throw new System.Exception( "Calling SteamClient.Init but is already initialized" );
 
 			System.Environment.SetEnvironmentVariable( "SteamAppId", appid.ToString() );
 			System.Environment.SetEnvironmentVariable( "SteamGameId", appid.ToString() );
@@ -29,106 +32,89 @@ namespace Steamworks
 
 			initialized = true;
 
-			SteamApps.InstallEvents();
-			SteamUtils.InstallEvents();
-			SteamParental.InstallEvents();
-			SteamMusic.InstallEvents();
-			SteamVideo.InstallEvents();
-			SteamUser.InstallEvents();
-			SteamFriends.InstallEvents();
-			SteamScreenshots.InstallEvents();
-			SteamUserStats.InstallEvents();
-			SteamInventory.InstallEvents();
-			SteamNetworking.InstallEvents();
-			SteamMatchmaking.InstallEvents();
-			SteamParties.InstallEvents();
-			SteamNetworkingSockets.InstallEvents();
-			SteamInput.InstallEvents();
+			//
+			// Dispatch is responsible for pumping the
+			// event loop.
+			//
+			Dispatch.Init();
+			Dispatch.ClientPipe = SteamAPI.GetHSteamPipe();
 
-			RunCallbacksAsync();
+			AddInterface<SteamApps>();
+			AddInterface<SteamFriends>();
+			AddInterface<SteamInput>();
+			AddInterface<SteamInventory>();
+			AddInterface<SteamMatchmaking>();
+			AddInterface<SteamMatchmakingServers>();
+			AddInterface<SteamMusic>();
+			AddInterface<SteamNetworking>();
+			AddInterface<SteamNetworkingSockets>();
+			AddInterface<SteamNetworkingUtils>();
+			AddInterface<SteamParental>();
+			AddInterface<SteamParties>();
+			AddInterface<SteamRemoteStorage>();
+			AddInterface<SteamScreenshots>();
+			AddInterface<SteamUGC>();
+			AddInterface<SteamUser>();
+			AddInterface<SteamUserStats>();
+			AddInterface<SteamUtils>();
+			AddInterface<SteamVideo>();
+			AddInterface<SteamRemotePlay>();
+
+			if ( asyncCallbacks )
+			{
+				//
+				// This will keep looping in the background every 16 ms
+				// until we shut down.
+				//
+				Dispatch.LoopClientAsync();
+			}
 		}
 
-		static List<SteamInterface> openIterfaces = new List<SteamInterface>();
-
-		internal static void WatchInterface( SteamInterface steamInterface )
+		internal static void AddInterface<T>() where T : SteamClass, new()
 		{
-			if ( openIterfaces.Contains( steamInterface ) )
-				throw new System.Exception( "openIterfaces already contains interface!" );
-
-			openIterfaces.Add( steamInterface );
+			var t = new T();
+			t.InitializeInterface( false );
+			openInterfaces.Add( t );
 		}
+
+		static readonly List<SteamClass> openInterfaces = new List<SteamClass>();
 
 		internal static void ShutdownInterfaces()
 		{
-			foreach ( var e in openIterfaces )
+			foreach ( var e in openInterfaces )
 			{
-				e.Shutdown();
+				e.DestroyInterface( false );
 			}
 
-			openIterfaces.Clear();
+			openInterfaces.Clear();
 		}
 
-		public static Action<Exception> OnCallbackException;
-
+		/// <summary>
+		/// Check if Steam is loaded and accessible.
+		/// </summary>		
 		public static bool IsValid => initialized;
-
-		internal static async void RunCallbacksAsync()
-		{
-			while ( IsValid )
-			{
-				await Task.Delay( 16 );
-				RunCallbacks();
-			}
-		}
 
 		public static void Shutdown()
 		{
-			Event.DisposeAllClient();
+			if ( !IsValid ) return;
 
-			initialized = false;
-
-			ShutdownInterfaces();
-			SteamApps.Shutdown();
-			SteamUtils.Shutdown();
-			SteamParental.Shutdown();
-			SteamMusic.Shutdown();
-			SteamVideo.Shutdown();
-			SteamUser.Shutdown();
-			SteamFriends.Shutdown();
-			SteamScreenshots.Shutdown();
-			SteamUserStats.Shutdown();
-			SteamInventory.Shutdown();
-			SteamNetworking.Shutdown();
-			SteamMatchmaking.Shutdown();
-			SteamParties.Shutdown();
-			SteamNetworkingUtils.Shutdown();
-			SteamNetworkingSockets.Shutdown();
-			SteamInput.Shutdown();
-			ServerList.Base.Shutdown();
+			Cleanup();
 
 			SteamAPI.Shutdown();
 		}
 
-		internal static void RegisterCallback( IntPtr intPtr, int callbackId )
+		internal static void Cleanup()
 		{
-			SteamAPI.RegisterCallback( intPtr, callbackId );
+			Dispatch.ShutdownClient();
+
+			initialized = false;
+			ShutdownInterfaces();
 		}
 
 		public static void RunCallbacks()
 		{
-			try
-			{
-				SteamAPI.RunCallbacks();
-			}
-			catch ( System.Exception e )
-			{
-				OnCallbackException?.Invoke( e );
-			}
-		}
-
-		internal static void UnregisterCallback( IntPtr intPtr )
-		{
-			SteamAPI.UnregisterCallback( intPtr );
+			if ( Dispatch.ClientPipe != 0 )
+				Dispatch.Frame( Dispatch.ClientPipe );
 		}
 
 		/// <summary>
@@ -166,5 +152,33 @@ namespace Steamworks
 		/// returns the appID of the current process
 		/// </summary>
 		public static AppId AppId { get; internal set; }
+
+		/// <summary>
+		/// Checks if your executable was launched through Steam and relaunches it through Steam if it wasn't
+		///  this returns true then it starts the Steam client if required and launches your game again through it, 
+		///  and you should quit your process as soon as possible. This effectively runs steam://run/AppId so it 
+		///  may not relaunch the exact executable that called it, as it will always relaunch from the version 
+		///  installed in your Steam library folder/
+		///  Note that during development, when not launching via Steam, this might always return true.
+		/// </summary>
+		public static bool RestartAppIfNecessary( uint appid )
+		{
+			// Having these here would probably mean it always returns false?
+
+			//System.Environment.SetEnvironmentVariable( "SteamAppId", appid.ToString() );
+			//System.Environment.SetEnvironmentVariable( "SteamGameId", appid.ToString() );
+
+			return SteamAPI.RestartAppIfNecessary( appid );
+		}
+
+		/// <summary>
+		/// Called in interfaces that rely on this being initialized
+		/// </summary>
+		internal static void ValidCheck()
+		{
+			if ( !IsValid )
+				throw new System.Exception( "SteamClient isn't initialized" );
+		}
+
 	}
 }

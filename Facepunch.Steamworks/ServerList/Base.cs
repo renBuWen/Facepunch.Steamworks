@@ -11,27 +11,7 @@ namespace Steamworks.ServerList
 	{
 
 		#region ISteamMatchmakingServers
-
-		static ISteamMatchmakingServers _internal;
-		internal static ISteamMatchmakingServers Internal
-		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamMatchmakingServers();
-					_internal.Init();
-				}
-
-				return _internal;
-			}
-		}
-
-		internal static void Shutdown()
-		{
-			_internal = null;
-		}
-
+		internal static ISteamMatchmakingServers Internal => SteamMatchmakingServers.Internal;
 		#endregion
 
 
@@ -122,12 +102,12 @@ namespace Steamworks.ServerList
 
 		#region Filters
 
-		internal List<MatchMakingKeyValuePair_t> filters = new List<MatchMakingKeyValuePair_t>();
-		internal virtual MatchMakingKeyValuePair_t[] GetFilters() => filters.ToArray();
+		internal List<MatchMakingKeyValuePair> filters = new List<MatchMakingKeyValuePair>();
+		internal virtual MatchMakingKeyValuePair[] GetFilters() => filters.ToArray();
 
 		public void AddFilter( string key, string value )
 		{
-			filters.Add( new MatchMakingKeyValuePair_t { Key = key, Value = value } );
+			filters.Add( new MatchMakingKeyValuePair { Key = key, Value = value } );
 		}
 
 		#endregion

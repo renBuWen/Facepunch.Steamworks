@@ -10,34 +10,29 @@ namespace Steamworks
 	/// <summary>
 	/// Interface which provides access to a range of miscellaneous utility functions
 	/// </summary>
-	public static class SteamUtils
+	public class SteamUtils : SteamSharedClass<SteamUtils>
 	{
-		static ISteamUtils _internal;
-		internal static ISteamUtils Internal
-		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamUtils();
-					_internal.Init();
-				}
+		internal static ISteamUtils Internal => Interface as ISteamUtils;
 
-				return _internal;
-			}
+		internal override void InitializeInterface( bool server )
+		{
+			SetInterface( server, new ISteamUtils( server ) );
+			InstallEvents( server );
 		}
 
-		internal static void Shutdown()
+		internal static void InstallEvents( bool server )
 		{
-			_internal = null;
+			Dispatch.Install<IPCountry_t>( x => OnIpCountryChanged?.Invoke(), server );
+			Dispatch.Install<LowBatteryPower_t>( x => OnLowBatteryPower?.Invoke( x.MinutesBatteryLeft ), server );
+			Dispatch.Install<SteamShutdown_t>( x => SteamClosed(), server );
+			Dispatch.Install<GamepadTextInputDismissed_t>( x => OnGamepadTextInputDismissed?.Invoke( x.Submitted ), server );
 		}
 
-		internal static void InstallEvents()
+		private static void SteamClosed()
 		{
-			IPCountry_t.Install( x => OnIpCountryChanged?.Invoke() );
-			LowBatteryPower_t.Install( x => OnLowBatteryPower?.Invoke( x.MinutesBatteryLeft ) );
-			SteamShutdown_t.Install( x => OnSteamShutdown?.Invoke() );
-			GamepadTextInputDismissed_t.Install( x => OnGamepadTextInputDismissed?.Invoke( x.Submitted ) );
+			SteamClient.Cleanup();
+
+			OnSteamShutdown?.Invoke();
 		}
 
 		/// <summary>
@@ -200,11 +195,10 @@ namespace Steamworks
 			var len = Internal.GetEnteredGamepadTextLength();
 			if ( len == 0 ) return string.Empty;
 
-			var sb = Helpers.TakeStringBuilder();
-			if ( !Internal.GetEnteredGamepadTextInput( sb, len ) )
+			if ( !Internal.GetEnteredGamepadTextInput( out var strVal ) )
 				return string.Empty;
 
-			return sb.ToString();
+			return strVal;
 		}
 
 		/// <summary>
@@ -261,5 +255,11 @@ namespace Steamworks
 			failed = false;
 			return Internal.IsAPICallCompleted( call, ref failed );
 		}
+
+
+		/// <summary>
+		/// Returns whether this steam client is a Steam China specific client, vs the global client
+		/// </summary>
+		public static bool IsSteamChinaLauncher => Internal.IsSteamChinaLauncher();
 	}
 }

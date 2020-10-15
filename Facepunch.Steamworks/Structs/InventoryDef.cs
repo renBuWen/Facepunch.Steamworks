@@ -98,16 +98,17 @@ namespace Steamworks
 			if ( _properties!= null && _properties.TryGetValue( name, out string val ) )
 				return val;
 
-			var sb = Helpers.TakeStringBuilder();
-			uint _ = (uint)sb.Capacity;
+			uint _ = (uint)Helpers.MemoryBufferSize;
 
-			if ( !SteamInventory.Internal.GetItemDefinitionProperty( Id, name, sb, ref _ ) )
+			if ( !SteamInventory.Internal.GetItemDefinitionProperty( Id, name, out var vl, ref _ ) )
 				return null;
-
+				
+			if (name == null) //return keys string
+				return vl;
+				
 			if ( _properties == null )
 				_properties = new Dictionary<string, string>();
 
-			var vl = sb.ToString();
 			_properties[name] = vl;
 
 			return vl;
@@ -134,7 +135,7 @@ namespace Steamworks
 			string val = GetProperty( name );
 
 			if ( string.IsNullOrEmpty( val ) )
-				return default( T );
+				return default;
 
 			try
 			{
@@ -142,7 +143,7 @@ namespace Steamworks
 			}
 			catch ( System.Exception )
 			{
-				return default( T );
+				return default;
 			}
 		}
 

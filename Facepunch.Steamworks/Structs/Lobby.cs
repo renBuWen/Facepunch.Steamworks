@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Steamworks.Data
@@ -9,7 +10,7 @@ namespace Steamworks.Data
 		public SteamId Id { get; internal set; }
 
 
-		internal Lobby( SteamId id )
+		public Lobby( SteamId id )
 		{
 			Id = id;
 		}
@@ -101,14 +102,11 @@ namespace Steamworks.Data
 			{
 				var cnt = SteamMatchmaking.Internal.GetLobbyDataCount( Id );
 
-				var a = Helpers.TakeStringBuilder();
-				var b = Helpers.TakeStringBuilder();
-
 				for ( int i =0; i<cnt; i++)
 				{
-					if ( SteamMatchmaking.Internal.GetLobbyDataByIndex( Id, i, a, a.Capacity, b, b.Capacity ) )
+					if ( SteamMatchmaking.Internal.GetLobbyDataByIndex( Id, i, out var a, out var b ) )
 					{
-						yield return new KeyValuePair<string, string>( a.ToString(), b.ToString() );
+						yield return new KeyValuePair<string, string>( a, b );
 					}
 				}
 			}
@@ -125,7 +123,7 @@ namespace Steamworks.Data
 		/// <summary>
 		/// Sets per-user metadata (for the local user implicitly)
 		/// </summary>
-		public void SetMemberData( Friend member, string key, string value )
+		public void SetMemberData( string key, string value )
 		{
 			SteamMatchmaking.Internal.SetLobbyMemberData( Id, key, value );
 		}
@@ -135,7 +133,8 @@ namespace Steamworks.Data
 		/// </summary>
 		public bool SendChatString( string message )
 		{
-			var data = System.Text.Encoding.UTF8.GetBytes( message );
+			//adding null terminator as it's used in Helpers.MemoryToString
+			var data = System.Text.Encoding.UTF8.GetBytes( message + '\0' );
 			return SendChatBytes( data );
 		}
 
@@ -202,6 +201,41 @@ namespace Steamworks.Data
 		}
 
 		/// <summary>
+		/// [SteamID variant]
+		/// Allows the owner to set the game server associated with the lobby. Triggers the 
+		/// Steammatchmaking.OnLobbyGameCreated event.
+		/// </summary>
+		public void SetGameServer( SteamId steamServer )
+		{
+			if ( !steamServer.IsValid )
+				throw new ArgumentException( $"SteamId for server is invalid" );
+
+			SteamMatchmaking.Internal.SetLobbyGameServer( Id, 0, 0, steamServer );
+		}
+
+		/// <summary>
+		/// [IP/Port variant]
+		/// Allows the owner to set the game server associated with the lobby. Triggers the 
+		/// Steammatchmaking.OnLobbyGameCreated event.
+		/// </summary>
+		public void SetGameServer( string ip, ushort port )
+		{
+			if ( !IPAddress.TryParse( ip, out IPAddress add ) )
+				throw new ArgumentException( $"IP address for server is invalid" );
+
+			SteamMatchmaking.Internal.SetLobbyGameServer( Id, add.IpToInt32(), port, new SteamId() );
+		}
+
+		/// <summary>
+		/// Gets the details of the lobby's game server, if set. Returns true if the lobby is 
+		/// valid and has a server set, otherwise returns false.
+		/// </summary>
+		public bool GetGameServer( ref uint ip, ref ushort port, ref SteamId serverId )
+		{
+			return SteamMatchmaking.Internal.GetLobbyGameServer( Id, ref ip, ref port, ref serverId );
+		}
+
+		/// <summary>
 		/// You must be the lobby owner to set the owner
 		/// </summary>
 		public Friend Owner
@@ -210,5 +244,9 @@ namespace Steamworks.Data
 			set => SteamMatchmaking.Internal.SetLobbyOwner( Id, value.Id );
 		}
 
+		/// <summary>
+		/// Check if the specified SteamId owns the lobby
+		/// </summary>
+		public bool IsOwnedBy( SteamId k ) => Owner.Id == k;
 	}
 }

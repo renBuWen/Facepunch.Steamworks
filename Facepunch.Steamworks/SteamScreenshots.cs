@@ -10,31 +10,20 @@ namespace Steamworks
 	/// <summary>
 	/// Undocumented Parental Settings
 	/// </summary>
-	public static class SteamScreenshots
+	public class SteamScreenshots : SteamClientClass<SteamScreenshots>
 	{
-		static ISteamScreenshots _internal;
-		internal static ISteamScreenshots Internal
-		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamScreenshots();
-					_internal.Init();
-				}
+		internal static ISteamScreenshots Internal => Interface as ISteamScreenshots;
 
-				return _internal;
-			}
-		}
-		internal static void Shutdown()
+		internal override void InitializeInterface( bool server )
 		{
-			_internal = null;
+			SetInterface( server, new ISteamScreenshots( server ) );
+			InstallEvents();
 		}
 
 		internal static void InstallEvents()
 		{
-			ScreenshotRequested_t.Install( x => OnScreenshotRequested?.Invoke() );
-			ScreenshotReady_t.Install( x =>
+			Dispatch.Install<ScreenshotRequested_t>( x => OnScreenshotRequested?.Invoke() );
+			Dispatch.Install<ScreenshotReady_t>( x =>
 			{
 				if ( x.Result != Result.OK )
 					OnScreenshotFailed?.Invoke( x.Result );
@@ -45,7 +34,7 @@ namespace Steamworks
 
 		/// <summary>
 		/// A screenshot has been requested by the user from the Steam screenshot hotkey. 
-		/// This will only be called if HookScreenshots has been enabled, in which case Steam 
+		/// This will only be called if Hooked is true, in which case Steam 
 		/// will not take the screenshot itself.
 		/// </summary>
 		public static event Action OnScreenshotRequested;

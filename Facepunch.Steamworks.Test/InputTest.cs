@@ -11,7 +11,8 @@ namespace Steamworks
 {
     [TestClass]
     [DeploymentItem( "steam_api64.dll" )]
-    [DeploymentItem( "controller_config/game_actions_252490.vdf" )]
+	[DeploymentItem( "steam_api.dll" )]
+	[DeploymentItem( "controller_config/game_actions_252490.vdf" )]
     public class InputTest
 	{
 		[TestMethod]
@@ -20,6 +21,9 @@ namespace Steamworks
 			foreach ( var controller in SteamInput.Controllers )
 			{
 				Console.Write( $"Controller: {controller}" );
+
+				var dstate = controller.GetDigitalState( "fire" );
+				var astate = controller.GetAnalogState( "Move" );
 			}
 		}
 	}

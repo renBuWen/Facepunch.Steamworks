@@ -9,12 +9,20 @@ namespace Steamworks
 {
     [TestClass]
     [DeploymentItem( "steam_api64.dll" )]
+    [DeploymentItem( "steam_api.dll" )]
     public class AppTest
     {
 		[AssemblyInitialize]
 		public static void AssemblyInit( TestContext context )
 		{
-			Steamworks.SteamClient.OnCallbackException = ( e ) =>
+			Steamworks.Dispatch.OnDebugCallback = ( type, str, server ) =>
+			{
+				Console.WriteLine( $"[Callback {type} {(server ? "server" : "client")}]" );
+				Console.WriteLine( str );
+				Console.WriteLine( $"" );
+			};
+
+			Steamworks.Dispatch.OnException = ( e ) =>
 			{
 				Console.Error.WriteLine( e.Message );
 				Console.Error.WriteLine( e.StackTrace );
@@ -40,11 +48,6 @@ namespace Steamworks
 
 			SteamServer.LogOnAnonymous();
 
-		}
-
-		static void OnNewUrlLaunchParameters()
-		{
-			// Wow!
 		}
 
 		[TestMethod]
@@ -94,7 +97,7 @@ namespace Steamworks
 		[TestMethod]
 		public async Task GetFileDetails()
 		{
-			var fileinfo = await SteamApps.GetFileDetailsAsync( "hl2.exe" );
+			var fileinfo = await SteamApps.GetFileDetailsAsync( "RustClient.exe" );
 
 			Console.WriteLine( $"fileinfo.SizeInBytes: {fileinfo?.SizeInBytes}" );
 			Console.WriteLine( $"fileinfo.Sha1: {fileinfo?.Sha1}" );

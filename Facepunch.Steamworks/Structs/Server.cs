@@ -9,8 +9,6 @@ namespace Steamworks.Data
 {
 	public struct ServerInfo : IEquatable<ServerInfo>
 	{
-		static ISteamMatchmakingServers Internal => Steamworks.ServerList.Base.Internal;
-
 		public string Name { get; set; }
 		public int Ping { get; set; }
 		public string GameDir { get; set; }
@@ -60,11 +58,11 @@ namespace Steamworks.Data
 				Address = Utility.Int32ToIp( item.NetAdr.IP ),
 				ConnectionPort = item.NetAdr.ConnectionPort,
 				QueryPort = item.NetAdr.QueryPort,
-				Name = item.ServerName,
+				Name = item.ServerNameUTF8(),
 				Ping = item.Ping,
-				GameDir = item.GameDir,
-				Map = item.Map,
-				Description = item.GameDescription,
+				GameDir = item.GameDirUTF8(),
+				Map = item.MapUTF8(),
+				Description = item.GameDescriptionUTF8(),
 				AppId = item.AppID,
 				Players = item.Players,
 				MaxPlayers = item.MaxPlayers,
@@ -73,7 +71,7 @@ namespace Steamworks.Data
 				Secure = item.Secure,
 				LastTimePlayed = item.TimeLastPlayed,
 				Version = item.ServerVersion,
-				TagString = item.GameTags,
+				TagString = item.GameTagsUTF8(),
 				SteamId = item.SteamID
 			};
 		}

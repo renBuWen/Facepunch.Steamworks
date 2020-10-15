@@ -9,194 +9,136 @@ namespace Steamworks
 {
 	internal class ISteamUtils : SteamInterface
 	{
-		public override string InterfaceName => "SteamUtils009";
 		
-		public override void InitInternals()
+		internal ISteamUtils( bool IsGameServer )
 		{
-			_GetSecondsSinceAppActive = Marshal.GetDelegateForFunctionPointer<FGetSecondsSinceAppActive>( Marshal.ReadIntPtr( VTable, 0) );
-			_GetSecondsSinceComputerActive = Marshal.GetDelegateForFunctionPointer<FGetSecondsSinceComputerActive>( Marshal.ReadIntPtr( VTable, 8) );
-			_GetConnectedUniverse = Marshal.GetDelegateForFunctionPointer<FGetConnectedUniverse>( Marshal.ReadIntPtr( VTable, 16) );
-			_GetServerRealTime = Marshal.GetDelegateForFunctionPointer<FGetServerRealTime>( Marshal.ReadIntPtr( VTable, 24) );
-			_GetIPCountry = Marshal.GetDelegateForFunctionPointer<FGetIPCountry>( Marshal.ReadIntPtr( VTable, 32) );
-			_GetImageSize = Marshal.GetDelegateForFunctionPointer<FGetImageSize>( Marshal.ReadIntPtr( VTable, 40) );
-			_GetImageRGBA = Marshal.GetDelegateForFunctionPointer<FGetImageRGBA>( Marshal.ReadIntPtr( VTable, 48) );
-			_GetCSERIPPort = Marshal.GetDelegateForFunctionPointer<FGetCSERIPPort>( Marshal.ReadIntPtr( VTable, 56) );
-			_GetCurrentBatteryPower = Marshal.GetDelegateForFunctionPointer<FGetCurrentBatteryPower>( Marshal.ReadIntPtr( VTable, 64) );
-			_GetAppID = Marshal.GetDelegateForFunctionPointer<FGetAppID>( Marshal.ReadIntPtr( VTable, 72) );
-			_SetOverlayNotificationPosition = Marshal.GetDelegateForFunctionPointer<FSetOverlayNotificationPosition>( Marshal.ReadIntPtr( VTable, 80) );
-			_IsAPICallCompleted = Marshal.GetDelegateForFunctionPointer<FIsAPICallCompleted>( Marshal.ReadIntPtr( VTable, 88) );
-			_GetAPICallFailureReason = Marshal.GetDelegateForFunctionPointer<FGetAPICallFailureReason>( Marshal.ReadIntPtr( VTable, 96) );
-			_GetAPICallResult = Marshal.GetDelegateForFunctionPointer<FGetAPICallResult>( Marshal.ReadIntPtr( VTable, 104) );
-			_RunFrame = Marshal.GetDelegateForFunctionPointer<FRunFrame>( Marshal.ReadIntPtr( VTable, 112) );
-			_GetIPCCallCount = Marshal.GetDelegateForFunctionPointer<FGetIPCCallCount>( Marshal.ReadIntPtr( VTable, 120) );
-			_SetWarningMessageHook = Marshal.GetDelegateForFunctionPointer<FSetWarningMessageHook>( Marshal.ReadIntPtr( VTable, 128) );
-			_IsOverlayEnabled = Marshal.GetDelegateForFunctionPointer<FIsOverlayEnabled>( Marshal.ReadIntPtr( VTable, 136) );
-			_BOverlayNeedsPresent = Marshal.GetDelegateForFunctionPointer<FBOverlayNeedsPresent>( Marshal.ReadIntPtr( VTable, 144) );
-			_CheckFileSignature = Marshal.GetDelegateForFunctionPointer<FCheckFileSignature>( Marshal.ReadIntPtr( VTable, 152) );
-			_ShowGamepadTextInput = Marshal.GetDelegateForFunctionPointer<FShowGamepadTextInput>( Marshal.ReadIntPtr( VTable, 160) );
-			_GetEnteredGamepadTextLength = Marshal.GetDelegateForFunctionPointer<FGetEnteredGamepadTextLength>( Marshal.ReadIntPtr( VTable, 168) );
-			_GetEnteredGamepadTextInput = Marshal.GetDelegateForFunctionPointer<FGetEnteredGamepadTextInput>( Marshal.ReadIntPtr( VTable, 176) );
-			_GetSteamUILanguage = Marshal.GetDelegateForFunctionPointer<FGetSteamUILanguage>( Marshal.ReadIntPtr( VTable, 184) );
-			_IsSteamRunningInVR = Marshal.GetDelegateForFunctionPointer<FIsSteamRunningInVR>( Marshal.ReadIntPtr( VTable, 192) );
-			_SetOverlayNotificationInset = Marshal.GetDelegateForFunctionPointer<FSetOverlayNotificationInset>( Marshal.ReadIntPtr( VTable, 200) );
-			_IsSteamInBigPictureMode = Marshal.GetDelegateForFunctionPointer<FIsSteamInBigPictureMode>( Marshal.ReadIntPtr( VTable, 208) );
-			_StartVRDashboard = Marshal.GetDelegateForFunctionPointer<FStartVRDashboard>( Marshal.ReadIntPtr( VTable, 216) );
-			_IsVRHeadsetStreamingEnabled = Marshal.GetDelegateForFunctionPointer<FIsVRHeadsetStreamingEnabled>( Marshal.ReadIntPtr( VTable, 224) );
-			_SetVRHeadsetStreamingEnabled = Marshal.GetDelegateForFunctionPointer<FSetVRHeadsetStreamingEnabled>( Marshal.ReadIntPtr( VTable, 232) );
+			SetupInterface( IsGameServer );
 		}
-		internal override void Shutdown()
-		{
-			base.Shutdown();
-			
-			_GetSecondsSinceAppActive = null;
-			_GetSecondsSinceComputerActive = null;
-			_GetConnectedUniverse = null;
-			_GetServerRealTime = null;
-			_GetIPCountry = null;
-			_GetImageSize = null;
-			_GetImageRGBA = null;
-			_GetCSERIPPort = null;
-			_GetCurrentBatteryPower = null;
-			_GetAppID = null;
-			_SetOverlayNotificationPosition = null;
-			_IsAPICallCompleted = null;
-			_GetAPICallFailureReason = null;
-			_GetAPICallResult = null;
-			_RunFrame = null;
-			_GetIPCCallCount = null;
-			_SetWarningMessageHook = null;
-			_IsOverlayEnabled = null;
-			_BOverlayNeedsPresent = null;
-			_CheckFileSignature = null;
-			_ShowGamepadTextInput = null;
-			_GetEnteredGamepadTextLength = null;
-			_GetEnteredGamepadTextInput = null;
-			_GetSteamUILanguage = null;
-			_IsSteamRunningInVR = null;
-			_SetOverlayNotificationInset = null;
-			_IsSteamInBigPictureMode = null;
-			_StartVRDashboard = null;
-			_IsVRHeadsetStreamingEnabled = null;
-			_SetVRHeadsetStreamingEnabled = null;
-		}
+		
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_SteamUtils_v010", CallingConvention = Platform.CC)]
+		internal static extern IntPtr SteamAPI_SteamUtils_v010();
+		public override IntPtr GetUserInterfacePointer() => SteamAPI_SteamUtils_v010();
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_SteamGameServerUtils_v010", CallingConvention = Platform.CC)]
+		internal static extern IntPtr SteamAPI_SteamGameServerUtils_v010();
+		public override IntPtr GetServerInterfacePointer() => SteamAPI_SteamGameServerUtils_v010();
+		
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetSecondsSinceAppActive( IntPtr self );
-		private FGetSecondsSinceAppActive _GetSecondsSinceAppActive;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetSecondsSinceAppActive", CallingConvention = Platform.CC)]
+		private static extern uint _GetSecondsSinceAppActive( IntPtr self );
 		
 		#endregion
 		internal uint GetSecondsSinceAppActive()
 		{
-			return _GetSecondsSinceAppActive( Self );
+			var returnValue = _GetSecondsSinceAppActive( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetSecondsSinceComputerActive( IntPtr self );
-		private FGetSecondsSinceComputerActive _GetSecondsSinceComputerActive;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetSecondsSinceComputerActive", CallingConvention = Platform.CC)]
+		private static extern uint _GetSecondsSinceComputerActive( IntPtr self );
 		
 		#endregion
 		internal uint GetSecondsSinceComputerActive()
 		{
-			return _GetSecondsSinceComputerActive( Self );
+			var returnValue = _GetSecondsSinceComputerActive( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate Universe FGetConnectedUniverse( IntPtr self );
-		private FGetConnectedUniverse _GetConnectedUniverse;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetConnectedUniverse", CallingConvention = Platform.CC)]
+		private static extern Universe _GetConnectedUniverse( IntPtr self );
 		
 		#endregion
 		internal Universe GetConnectedUniverse()
 		{
-			return _GetConnectedUniverse( Self );
+			var returnValue = _GetConnectedUniverse( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetServerRealTime( IntPtr self );
-		private FGetServerRealTime _GetServerRealTime;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetServerRealTime", CallingConvention = Platform.CC)]
+		private static extern uint _GetServerRealTime( IntPtr self );
 		
 		#endregion
 		internal uint GetServerRealTime()
 		{
-			return _GetServerRealTime( Self );
+			var returnValue = _GetServerRealTime( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate IntPtr FGetIPCountry( IntPtr self );
-		private FGetIPCountry _GetIPCountry;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetIPCountry", CallingConvention = Platform.CC)]
+		private static extern Utf8StringPointer _GetIPCountry( IntPtr self );
 		
 		#endregion
 		internal string GetIPCountry()
 		{
-			return GetString( _GetIPCountry( Self ) );
+			var returnValue = _GetIPCountry( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetImageSize", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetImageSize( IntPtr self, int iImage, ref uint pnWidth, ref uint pnHeight );
-		private FGetImageSize _GetImageSize;
+		private static extern bool _GetImageSize( IntPtr self, int iImage, ref uint pnWidth, ref uint pnHeight );
 		
 		#endregion
 		internal bool GetImageSize( int iImage, ref uint pnWidth, ref uint pnHeight )
 		{
-			return _GetImageSize( Self, iImage, ref pnWidth, ref pnHeight );
+			var returnValue = _GetImageSize( Self, iImage, ref pnWidth, ref pnHeight );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetImageRGBA", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetImageRGBA( IntPtr self, int iImage, [In,Out] byte[]  pubDest, int nDestBufferSize );
-		private FGetImageRGBA _GetImageRGBA;
+		private static extern bool _GetImageRGBA( IntPtr self, int iImage, [In,Out] byte[]  pubDest, int nDestBufferSize );
 		
 		#endregion
 		internal bool GetImageRGBA( int iImage, [In,Out] byte[]  pubDest, int nDestBufferSize )
 		{
-			return _GetImageRGBA( Self, iImage, pubDest, nDestBufferSize );
+			var returnValue = _GetImageRGBA( Self, iImage, pubDest, nDestBufferSize );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetCSERIPPort", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetCSERIPPort( IntPtr self, ref uint unIP, ref ushort usPort );
-		private FGetCSERIPPort _GetCSERIPPort;
+		private static extern bool _GetCSERIPPort( IntPtr self, ref uint unIP, ref ushort usPort );
 		
 		#endregion
 		internal bool GetCSERIPPort( ref uint unIP, ref ushort usPort )
 		{
-			return _GetCSERIPPort( Self, ref unIP, ref usPort );
+			var returnValue = _GetCSERIPPort( Self, ref unIP, ref usPort );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate byte FGetCurrentBatteryPower( IntPtr self );
-		private FGetCurrentBatteryPower _GetCurrentBatteryPower;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetCurrentBatteryPower", CallingConvention = Platform.CC)]
+		private static extern byte _GetCurrentBatteryPower( IntPtr self );
 		
 		#endregion
 		internal byte GetCurrentBatteryPower()
 		{
-			return _GetCurrentBatteryPower( Self );
+			var returnValue = _GetCurrentBatteryPower( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetAppID( IntPtr self );
-		private FGetAppID _GetAppID;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetAppID", CallingConvention = Platform.CC)]
+		private static extern uint _GetAppID( IntPtr self );
 		
 		#endregion
 		internal uint GetAppID()
 		{
-			return _GetAppID( Self );
+			var returnValue = _GetAppID( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSetOverlayNotificationPosition( IntPtr self, NotificationPosition eNotificationPosition );
-		private FSetOverlayNotificationPosition _SetOverlayNotificationPosition;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_SetOverlayNotificationPosition", CallingConvention = Platform.CC)]
+		private static extern void _SetOverlayNotificationPosition( IntPtr self, NotificationPosition eNotificationPosition );
 		
 		#endregion
 		internal void SetOverlayNotificationPosition( NotificationPosition eNotificationPosition )
@@ -205,66 +147,54 @@ namespace Steamworks
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsAPICallCompleted", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsAPICallCompleted( IntPtr self, SteamAPICall_t hSteamAPICall, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed );
-		private FIsAPICallCompleted _IsAPICallCompleted;
+		private static extern bool _IsAPICallCompleted( IntPtr self, SteamAPICall_t hSteamAPICall, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed );
 		
 		#endregion
 		internal bool IsAPICallCompleted( SteamAPICall_t hSteamAPICall, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed )
 		{
-			return _IsAPICallCompleted( Self, hSteamAPICall, ref pbFailed );
+			var returnValue = _IsAPICallCompleted( Self, hSteamAPICall, ref pbFailed );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICallFailure FGetAPICallFailureReason( IntPtr self, SteamAPICall_t hSteamAPICall );
-		private FGetAPICallFailureReason _GetAPICallFailureReason;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetAPICallFailureReason", CallingConvention = Platform.CC)]
+		private static extern SteamAPICallFailure _GetAPICallFailureReason( IntPtr self, SteamAPICall_t hSteamAPICall );
 		
 		#endregion
 		internal SteamAPICallFailure GetAPICallFailureReason( SteamAPICall_t hSteamAPICall )
 		{
-			return _GetAPICallFailureReason( Self, hSteamAPICall );
+			var returnValue = _GetAPICallFailureReason( Self, hSteamAPICall );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetAPICallResult", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetAPICallResult( IntPtr self, SteamAPICall_t hSteamAPICall, IntPtr pCallback, int cubCallback, int iCallbackExpected, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed );
-		private FGetAPICallResult _GetAPICallResult;
+		private static extern bool _GetAPICallResult( IntPtr self, SteamAPICall_t hSteamAPICall, IntPtr pCallback, int cubCallback, int iCallbackExpected, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed );
 		
 		#endregion
 		internal bool GetAPICallResult( SteamAPICall_t hSteamAPICall, IntPtr pCallback, int cubCallback, int iCallbackExpected, [MarshalAs( UnmanagedType.U1 )] ref bool pbFailed )
 		{
-			return _GetAPICallResult( Self, hSteamAPICall, pCallback, cubCallback, iCallbackExpected, ref pbFailed );
+			var returnValue = _GetAPICallResult( Self, hSteamAPICall, pCallback, cubCallback, iCallbackExpected, ref pbFailed );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FRunFrame( IntPtr self );
-		private FRunFrame _RunFrame;
-		
-		#endregion
-		internal void RunFrame()
-		{
-			_RunFrame( Self );
-		}
-		
-		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetIPCCallCount( IntPtr self );
-		private FGetIPCCallCount _GetIPCCallCount;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetIPCCallCount", CallingConvention = Platform.CC)]
+		private static extern uint _GetIPCCallCount( IntPtr self );
 		
 		#endregion
 		internal uint GetIPCCallCount()
 		{
-			return _GetIPCCallCount( Self );
+			var returnValue = _GetIPCCallCount( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSetWarningMessageHook( IntPtr self, IntPtr pFunction );
-		private FSetWarningMessageHook _SetWarningMessageHook;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_SetWarningMessageHook", CallingConvention = Platform.CC)]
+		private static extern void _SetWarningMessageHook( IntPtr self, IntPtr pFunction );
 		
 		#endregion
 		internal void SetWarningMessageHook( IntPtr pFunction )
@@ -273,102 +203,103 @@ namespace Steamworks
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsOverlayEnabled", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsOverlayEnabled( IntPtr self );
-		private FIsOverlayEnabled _IsOverlayEnabled;
+		private static extern bool _IsOverlayEnabled( IntPtr self );
 		
 		#endregion
 		internal bool IsOverlayEnabled()
 		{
-			return _IsOverlayEnabled( Self );
+			var returnValue = _IsOverlayEnabled( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_BOverlayNeedsPresent", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FBOverlayNeedsPresent( IntPtr self );
-		private FBOverlayNeedsPresent _BOverlayNeedsPresent;
+		private static extern bool _BOverlayNeedsPresent( IntPtr self );
 		
 		#endregion
 		internal bool BOverlayNeedsPresent()
 		{
-			return _BOverlayNeedsPresent( Self );
+			var returnValue = _BOverlayNeedsPresent( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate SteamAPICall_t FCheckFileSignature( IntPtr self, string szFileName );
-		private FCheckFileSignature _CheckFileSignature;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_CheckFileSignature", CallingConvention = Platform.CC)]
+		private static extern SteamAPICall_t _CheckFileSignature( IntPtr self, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string szFileName );
 		
 		#endregion
-		internal async Task<CheckFileSignature_t?> CheckFileSignature( string szFileName )
+		internal CallResult<CheckFileSignature_t> CheckFileSignature( [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string szFileName )
 		{
-			return await CheckFileSignature_t.GetResultAsync( _CheckFileSignature( Self, szFileName ) );
+			var returnValue = _CheckFileSignature( Self, szFileName );
+			return new CallResult<CheckFileSignature_t>( returnValue, IsServer );
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_ShowGamepadTextInput", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FShowGamepadTextInput( IntPtr self, GamepadTextInputMode eInputMode, GamepadTextInputLineMode eLineInputMode, string pchDescription, uint unCharMax, string pchExistingText );
-		private FShowGamepadTextInput _ShowGamepadTextInput;
+		private static extern bool _ShowGamepadTextInput( IntPtr self, GamepadTextInputMode eInputMode, GamepadTextInputLineMode eLineInputMode, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchDescription, uint unCharMax, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchExistingText );
 		
 		#endregion
-		internal bool ShowGamepadTextInput( GamepadTextInputMode eInputMode, GamepadTextInputLineMode eLineInputMode, string pchDescription, uint unCharMax, string pchExistingText )
+		internal bool ShowGamepadTextInput( GamepadTextInputMode eInputMode, GamepadTextInputLineMode eLineInputMode, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchDescription, uint unCharMax, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchExistingText )
 		{
-			return _ShowGamepadTextInput( Self, eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText );
+			var returnValue = _ShowGamepadTextInput( Self, eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate uint FGetEnteredGamepadTextLength( IntPtr self );
-		private FGetEnteredGamepadTextLength _GetEnteredGamepadTextLength;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetEnteredGamepadTextLength", CallingConvention = Platform.CC)]
+		private static extern uint _GetEnteredGamepadTextLength( IntPtr self );
 		
 		#endregion
 		internal uint GetEnteredGamepadTextLength()
 		{
-			return _GetEnteredGamepadTextLength( Self );
+			var returnValue = _GetEnteredGamepadTextLength( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetEnteredGamepadTextInput", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FGetEnteredGamepadTextInput( IntPtr self, StringBuilder pchText, uint cchText );
-		private FGetEnteredGamepadTextInput _GetEnteredGamepadTextInput;
+		private static extern bool _GetEnteredGamepadTextInput( IntPtr self, IntPtr pchText, uint cchText );
 		
 		#endregion
-		internal bool GetEnteredGamepadTextInput( StringBuilder pchText, uint cchText )
+		internal bool GetEnteredGamepadTextInput( out string pchText )
 		{
-			return _GetEnteredGamepadTextInput( Self, pchText, cchText );
+			IntPtr mempchText = Helpers.TakeMemory();
+			var returnValue = _GetEnteredGamepadTextInput( Self, mempchText, (1024 * 32) );
+			pchText = Helpers.MemoryToString( mempchText );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate IntPtr FGetSteamUILanguage( IntPtr self );
-		private FGetSteamUILanguage _GetSteamUILanguage;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetSteamUILanguage", CallingConvention = Platform.CC)]
+		private static extern Utf8StringPointer _GetSteamUILanguage( IntPtr self );
 		
 		#endregion
 		internal string GetSteamUILanguage()
 		{
-			return GetString( _GetSteamUILanguage( Self ) );
+			var returnValue = _GetSteamUILanguage( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsSteamRunningInVR", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsSteamRunningInVR( IntPtr self );
-		private FIsSteamRunningInVR _IsSteamRunningInVR;
+		private static extern bool _IsSteamRunningInVR( IntPtr self );
 		
 		#endregion
 		internal bool IsSteamRunningInVR()
 		{
-			return _IsSteamRunningInVR( Self );
+			var returnValue = _IsSteamRunningInVR( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSetOverlayNotificationInset( IntPtr self, int nHorizontalInset, int nVerticalInset );
-		private FSetOverlayNotificationInset _SetOverlayNotificationInset;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_SetOverlayNotificationInset", CallingConvention = Platform.CC)]
+		private static extern void _SetOverlayNotificationInset( IntPtr self, int nHorizontalInset, int nVerticalInset );
 		
 		#endregion
 		internal void SetOverlayNotificationInset( int nHorizontalInset, int nVerticalInset )
@@ -377,21 +308,20 @@ namespace Steamworks
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsSteamInBigPictureMode", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsSteamInBigPictureMode( IntPtr self );
-		private FIsSteamInBigPictureMode _IsSteamInBigPictureMode;
+		private static extern bool _IsSteamInBigPictureMode( IntPtr self );
 		
 		#endregion
 		internal bool IsSteamInBigPictureMode()
 		{
-			return _IsSteamInBigPictureMode( Self );
+			var returnValue = _IsSteamInBigPictureMode( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FStartVRDashboard( IntPtr self );
-		private FStartVRDashboard _StartVRDashboard;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_StartVRDashboard", CallingConvention = Platform.CC)]
+		private static extern void _StartVRDashboard( IntPtr self );
 		
 		#endregion
 		internal void StartVRDashboard()
@@ -400,26 +330,73 @@ namespace Steamworks
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsVRHeadsetStreamingEnabled", CallingConvention = Platform.CC)]
 		[return: MarshalAs( UnmanagedType.I1 )]
-		private delegate bool FIsVRHeadsetStreamingEnabled( IntPtr self );
-		private FIsVRHeadsetStreamingEnabled _IsVRHeadsetStreamingEnabled;
+		private static extern bool _IsVRHeadsetStreamingEnabled( IntPtr self );
 		
 		#endregion
 		internal bool IsVRHeadsetStreamingEnabled()
 		{
-			return _IsVRHeadsetStreamingEnabled( Self );
+			var returnValue = _IsVRHeadsetStreamingEnabled( Self );
+			return returnValue;
 		}
 		
 		#region FunctionMeta
-		[UnmanagedFunctionPointer( CallingConvention.ThisCall )]
-		private delegate void FSetVRHeadsetStreamingEnabled( IntPtr self, [MarshalAs( UnmanagedType.U1 )] bool bEnabled );
-		private FSetVRHeadsetStreamingEnabled _SetVRHeadsetStreamingEnabled;
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_SetVRHeadsetStreamingEnabled", CallingConvention = Platform.CC)]
+		private static extern void _SetVRHeadsetStreamingEnabled( IntPtr self, [MarshalAs( UnmanagedType.U1 )] bool bEnabled );
 		
 		#endregion
 		internal void SetVRHeadsetStreamingEnabled( [MarshalAs( UnmanagedType.U1 )] bool bEnabled )
 		{
 			_SetVRHeadsetStreamingEnabled( Self, bEnabled );
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_IsSteamChinaLauncher", CallingConvention = Platform.CC)]
+		[return: MarshalAs( UnmanagedType.I1 )]
+		private static extern bool _IsSteamChinaLauncher( IntPtr self );
+		
+		#endregion
+		internal bool IsSteamChinaLauncher()
+		{
+			var returnValue = _IsSteamChinaLauncher( Self );
+			return returnValue;
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_InitFilterText", CallingConvention = Platform.CC)]
+		[return: MarshalAs( UnmanagedType.I1 )]
+		private static extern bool _InitFilterText( IntPtr self, uint unFilterOptions );
+		
+		#endregion
+		internal bool InitFilterText( uint unFilterOptions )
+		{
+			var returnValue = _InitFilterText( Self, unFilterOptions );
+			return returnValue;
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_FilterText", CallingConvention = Platform.CC)]
+		private static extern int _FilterText( IntPtr self, TextFilteringContext eContext, SteamId sourceSteamID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchInputMessage, IntPtr pchOutFilteredText, uint nByteSizeOutFilteredText );
+		
+		#endregion
+		internal int FilterText( TextFilteringContext eContext, SteamId sourceSteamID, [MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof( Utf8StringToNative ) )] string pchInputMessage, out string pchOutFilteredText )
+		{
+			IntPtr mempchOutFilteredText = Helpers.TakeMemory();
+			var returnValue = _FilterText( Self, eContext, sourceSteamID, pchInputMessage, mempchOutFilteredText, (1024 * 32) );
+			pchOutFilteredText = Helpers.MemoryToString( mempchOutFilteredText );
+			return returnValue;
+		}
+		
+		#region FunctionMeta
+		[DllImport( Platform.LibraryName, EntryPoint = "SteamAPI_ISteamUtils_GetIPv6ConnectivityState", CallingConvention = Platform.CC)]
+		private static extern SteamIPv6ConnectivityState _GetIPv6ConnectivityState( IntPtr self, SteamIPv6ConnectivityProtocol eProtocol );
+		
+		#endregion
+		internal SteamIPv6ConnectivityState GetIPv6ConnectivityState( SteamIPv6ConnectivityProtocol eProtocol )
+		{
+			var returnValue = _GetIPv6ConnectivityState( Self, eProtocol );
+			return returnValue;
 		}
 		
 	}

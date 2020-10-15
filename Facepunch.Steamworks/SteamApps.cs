@@ -11,32 +11,19 @@ namespace Steamworks
 	/// <summary>
 	/// Exposes a wide range of information and actions for applications and Downloadable Content (DLC).
 	/// </summary>
-	public static class SteamApps
+	public class SteamApps : SteamSharedClass<SteamApps>
 	{
-		static ISteamApps _internal;
-		internal static ISteamApps Internal
-		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamApps();
-					_internal.Init();
-				}
+		internal static ISteamApps Internal => Interface as ISteamApps;
 
-				return _internal;
-			}
-		}
-
-		internal static void Shutdown()
+		internal override void InitializeInterface( bool server )
 		{
-			_internal = null;
+			SetInterface( server, new ISteamApps( server ) );
 		}
 
 		internal static void InstallEvents()
 		{
-			DlcInstalled_t.Install( x => OnDlcInstalled?.Invoke( x.AppID ) );
-			NewUrlLaunchParameters_t.Install( x => OnNewLaunchParameters?.Invoke() );
+			Dispatch.Install<DlcInstalled_t>( x => OnDlcInstalled?.Invoke( x.AppID ) );
+			Dispatch.Install<NewUrlLaunchParameters_t>( x => OnNewLaunchParameters?.Invoke() );
 		}
 
 		/// <summary>
@@ -87,7 +74,7 @@ namespace Steamworks
 		/// <summary>
 		/// Gets a list of the languages the current app supports.
 		/// </summary>
-		public static string[] AvailablLanguages => Internal.GetAvailableGameLanguages().Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+		public static string[] AvailableLanguages => Internal.GetAvailableGameLanguages().Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
 
 		/// <summary>
 		/// Checks if the active user is subscribed to a specified AppId.
@@ -128,15 +115,13 @@ namespace Steamworks
 
 			for ( int i = 0; i < Internal.GetDLCCount(); i++ )
 			{
-				var sb = Helpers.TakeStringBuilder();
-
-				if ( !Internal.BGetDLCDataByIndex( i, ref appid, ref available, sb, sb.Capacity ) )
+				if ( !Internal.BGetDLCDataByIndex( i, ref appid, ref available, out var strVal ) )
 					continue;
 
 				yield return new DlcInformation
 				{
 					AppId = appid.Value,
-					Name = sb.ToString(),
+					Name = strVal,
 					Available = available
 				};
 			}
@@ -159,12 +144,10 @@ namespace Steamworks
 		{
 			get
 			{
-				var sb = Helpers.TakeStringBuilder();
-
-				if ( !Internal.GetCurrentBetaName( sb, sb.Capacity ) )
+				if ( !Internal.GetCurrentBetaName( out var strVal ) )
 					return null;
 
-				return sb.ToString();
+				return strVal;
 			}
 		}
 
@@ -185,9 +168,7 @@ namespace Steamworks
 				appid = SteamClient.AppId;
 
 			var depots = new DepotId_t[32];
-			uint count = 0;
-
-			count = Internal.GetInstalledDepots( appid.Value, depots, (uint) depots.Length );
+			uint count = Internal.GetInstalledDepots( appid.Value, depots, (uint) depots.Length );
 
 			for ( int i = 0; i < count; i++ )
 			{
@@ -204,12 +185,10 @@ namespace Steamworks
 			if ( appid == 0 )
 				appid = SteamClient.AppId;
 
-			var sb = Helpers.TakeStringBuilder();
-
-			if ( Internal.GetAppInstallDir( appid.Value, sb, (uint) sb.Capacity ) == 0 )
+			if ( Internal.GetAppInstallDir( appid.Value, out var strVal ) == 0 )
 				return null;
 
-			return sb.ToString();
+			return strVal;
 		}
 
 		/// <summary>
@@ -239,7 +218,7 @@ namespace Steamworks
 			ulong punBytesTotal = 0;
 
 			if ( !Internal.GetDlcDownloadProgress( appid.Value, ref punBytesDownloaded, ref punBytesTotal ) )
-				return default( DownloadProgress );
+				return default;
 
 			return new DownloadProgress { BytesDownloaded = punBytesDownloaded, BytesTotal = punBytesTotal, Active = true };
 		}
@@ -282,11 +261,29 @@ namespace Steamworks
 		{
 			get
 			{
-				var sb = Helpers.TakeStringBuilder();
-				var len = Internal.GetLaunchCommandLine( sb, sb.Capacity );
-				return sb.ToString();
+				Internal.GetLaunchCommandLine( out var strVal );
+				return strVal;
 			}
 		}
+
+		/// <summary>
+		///  check if game is a timed trial with limited playtime
+		/// </summary>
+		public static bool IsTimedTrial( out int secondsAllowed, out int secondsPlayed )
+        {
+			uint a = 0;
+			uint b = 0;
+			secondsAllowed = 0;
+			secondsPlayed = 0;
+
+			if ( !Internal.BIsTimedTrial( ref a, ref b ) )
+				return false;
+
+			secondsAllowed = (int) a;
+			secondsPlayed = (int) b;
+
+			return true;
+        }
 
 	}
 }

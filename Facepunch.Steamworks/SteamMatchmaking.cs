@@ -10,34 +10,34 @@ namespace Steamworks
 	/// <summary>
 	/// Functions for clients to access matchmaking services, favorites, and to operate on game lobbies
 	/// </summary>
-	public static class SteamMatchmaking
+	public class SteamMatchmaking : SteamClientClass<SteamMatchmaking>
 	{
-		static ISteamMatchmaking _internal;
+		internal static ISteamMatchmaking Internal => Interface as ISteamMatchmaking;
 
-		internal static ISteamMatchmaking Internal
+		internal override void InitializeInterface( bool server )
 		{
-			get
-			{
-				if ( _internal == null )
-				{
-					_internal = new ISteamMatchmaking();
-					_internal.Init();
-				}
+			SetInterface( server, new ISteamMatchmaking( server ) );
 
-				return _internal;
-			}
+			InstallEvents();
 		}
+	
+		/// <summary>
+		/// Maximum number of characters a lobby metadata key can be
+		/// </summary>
+		internal static int MaxLobbyKeyLength => 255;
 
-		internal static void Shutdown()
-		{
-			_internal = null;
-		}
 
 		internal static void InstallEvents()
 		{
-			LobbyInvite_t.Install( x => OnLobbyInvite?.Invoke( new Friend( x.SteamIDUser ), new Lobby( x.SteamIDLobby ) ) );
+			Dispatch.Install<LobbyInvite_t>( x => OnLobbyInvite?.Invoke( new Friend( x.SteamIDUser ), new Lobby( x.SteamIDLobby ) ) );
 
-			LobbyDataUpdate_t.Install( x =>
+			Dispatch.Install<LobbyEnter_t>( x => OnLobbyEntered?.Invoke( new Lobby( x.SteamIDLobby ) ) );
+
+			Dispatch.Install<LobbyCreated_t>( x => OnLobbyCreated?.Invoke( x.Result, new Lobby( x.SteamIDLobby ) ) );
+
+			Dispatch.Install<LobbyGameCreated_t>( x => OnLobbyGameCreated?.Invoke( new Lobby( x.SteamIDLobby ), x.IP, x.Port, x.SteamIDGameServer ) );
+
+			Dispatch.Install<LobbyDataUpdate_t>( x =>
 			{
 				if ( x.Success == 0 ) return;
 
@@ -47,7 +47,7 @@ namespace Steamworks
 					OnLobbyMemberDataChanged?.Invoke( new Lobby( x.SteamIDLobby ), new Friend( x.SteamIDMember ) );
 			} );
 
-			LobbyChatUpdate_t.Install( x =>
+			Dispatch.Install<LobbyChatUpdate_t>( x =>
 			{
 				if ( (x.GfChatMemberStateChange & (int)ChatMemberStateChange.Entered) != 0 )
 					OnLobbyMemberJoined?.Invoke( new Lobby( x.SteamIDLobby ), new Friend( x.SteamIDUserChanged ) );
@@ -65,23 +65,20 @@ namespace Steamworks
 					OnLobbyMemberBanned?.Invoke( new Lobby( x.SteamIDLobby ), new Friend( x.SteamIDUserChanged ), new Friend( x.SteamIDMakingChange ) );
 			} );
 
-			LobbyChatMsg_t.Install( OnLobbyChatMessageRecievedAPI );
+			Dispatch.Install<LobbyChatMsg_t>( OnLobbyChatMessageRecievedAPI );
 		}
 
 		static private unsafe void OnLobbyChatMessageRecievedAPI( LobbyChatMsg_t callback )
 		{
 			SteamId steamid = default;
 			ChatEntryType chatEntryType = default;
-			var buffer = Helpers.TakeBuffer( 1024 * 4 );
+			var buffer = Helpers.TakeMemory();
 
-			fixed ( byte* p = buffer )
+			var readData = Internal.GetLobbyChatEntry( callback.SteamIDLobby, (int)callback.ChatID, ref steamid, buffer, Helpers.MemoryBufferSize, ref chatEntryType );
+
+			if ( readData > 0 )
 			{
-				var readData = Internal.GetLobbyChatEntry( callback.SteamIDLobby, (int)callback.ChatID, ref steamid, (IntPtr)p, buffer.Length, ref chatEntryType );
-
-				if ( readData > 0 )
-				{
-					OnChatMessage?.Invoke( new Lobby( callback.SteamIDLobby ), new Friend( steamid ), Encoding.UTF8.GetString( buffer, 0, readData ) );
-				}
+				OnChatMessage?.Invoke( new Lobby( callback.SteamIDLobby ), new Friend( steamid ), Helpers.MemoryToString( buffer ) );
 			}
 		}
 
@@ -89,6 +86,21 @@ namespace Steamworks
 		/// Someone invited you to a lobby
 		/// </summary>
 		public static event Action<Friend, Lobby> OnLobbyInvite;
+
+		/// <summary>
+		/// You joined a lobby
+		/// </summary>
+		public static event Action<Lobby> OnLobbyEntered;
+
+		/// <summary>
+		/// You created a lobby
+		/// </summary>
+		public static event Action<Result, Lobby> OnLobbyCreated;
+
+		/// <summary>
+		/// A game server has been associated with the lobby
+		/// </summary>
+		public static event Action<Lobby, uint, ushort, SteamId> OnLobbyGameCreated;
 
 		/// <summary>
 		/// The lobby metadata has changed
@@ -139,6 +151,17 @@ namespace Steamworks
 		{
 			var lobby = await Internal.CreateLobby( LobbyType.Invisible, maxMembers );
 			if ( !lobby.HasValue || lobby.Value.Result != Result.OK ) return null;
+
+			return new Lobby { Id = lobby.Value.SteamIDLobby };
+		}
+
+		/// <summary>
+		/// Attempts to directly join the specified lobby
+		/// </summary>
+		public static async Task<Lobby?> JoinLobbyAsync( SteamId lobbyId )
+		{
+			var lobby = await Internal.JoinLobby( lobbyId );
+			if ( !lobby.HasValue ) return null;
 
 			return new Lobby { Id = lobby.Value.SteamIDLobby };
 		}
